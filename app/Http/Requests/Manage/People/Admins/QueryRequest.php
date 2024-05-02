@@ -4,7 +4,7 @@ namespace App\Http\Requests\Manage\People\Admins;
 
 use Diver\Database\Eloquent\Builder;
 use Diver\Http\Requests\QueryRequest as Request;
-use Src\People\User;
+use Src\Voting\Association;
 
 class QueryRequest extends Request
 {
@@ -13,7 +13,7 @@ class QueryRequest extends Request
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = Association::class;
 
     /**
      * Filterable

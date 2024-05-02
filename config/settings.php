@@ -4,6 +4,7 @@ return [
 
     'KT_THEME_BOOTSTRAP' => [
         'default' => \App\Core\Bootstrap\BootstrapDefault::class,
+        'main' => \App\Core\Bootstrap\BootstrapMain::class,
     ],
 
     'KT_THEME' => 'metronic',
@@ -11,6 +12,7 @@ return [
     # Theme layout templates directory
 
     'KT_THEME_LAYOUT_DIR' => 'metronic.layouts',
+    'KT_THEME_LAYOUT_MAIN' => 'main.layouts',
 
 
     # Theme Mode

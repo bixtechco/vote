@@ -1,6 +1,6 @@
-@extends('main.layouts.app', [
+@extends('main.layouts.admin', [
 ])
 
-@section('page')
+@section('content')
     <input hidden id="CSRF_TOKEN" value="{{ csrf_token() }}">
 @endsection

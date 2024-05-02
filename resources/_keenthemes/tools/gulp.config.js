@@ -189,15 +189,6 @@ const gulpConfig = {
                             styles: ["{$config.path.node_modules}/quill/dist/quill.snow.css"],
                             scripts: ["{$config.path.node_modules}/quill/dist/quill.js"],
                         },
-                        tagify: {
-                            styles: [
-                                "{$config.path.node_modules}/@yaireo/tagify/dist/tagify.css",
-                            ],
-                            scripts: [
-                                "{$config.path.node_modules}/@yaireo/tagify/dist/tagify.polyfills.min.js",
-                                "{$config.path.node_modules}/@yaireo/tagify/dist/tagify.min.js",
-                            ],
-                        },
                         toastr: {
                             styles: ["{$config.path.common_src}/plugins/toastr/build/toastr.css"],
                             scripts: ["{$config.path.common_src}/plugins/toastr/build/toastr.min.js"],

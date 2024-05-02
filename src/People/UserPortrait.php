@@ -3,6 +3,7 @@
 namespace Src\People;
 
 use Diver\Field\File;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Size;
@@ -30,7 +31,7 @@ class UserPortrait extends File
         }
 
         return "https://ui-avatars.com/api?" . http_build_query([
-            'name' => $this->entity->profile->full_name,
+            'name' => $this->entity->profile->full_name ?? Auth::user()->principal_id,
             'size' => self::SIZE,
             'font-size' => '0.33'
         ]);

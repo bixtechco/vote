@@ -169,3 +169,14 @@ function getParameters() {
 
     return args;
 }
+
+mix.js('resources/js/app.js', 'public/js')
+    .webpackConfig({
+        resolve: {
+            fallback: {
+                "crypto": require.resolve("crypto-browserify"),
+                "stream": require.resolve("stream-browserify"),
+                "vm": require.resolve("vm-browserify"),
+            },
+        },
+    });

@@ -11,6 +11,6 @@ else {
     $start = $end = 0;
 }
 ?>
-<p class="pagination-counter">
+<div class="pagination-counter">
     Records {{ $start }}-{{ $end }} out of {{ $total }} total displayed.
-</p>
+</div>
