@@ -1,124 +1,108 @@
-@extends('manage.layouts.admin', [ 'pageTitle' => 'Users Overview' ])
+@extends('manage.layouts.admin')
 
 @section('content')
-    @component('manage.components.portlet', [
-        'headText' => 'Users',
-        'headIcon' => 'flaticon-user',
-        'unair' => true,
-        'formAction' => route(Route::currentRouteName()),
-        'formMethod' => 'get',
-        'formXlColOffset' => 0
-    ])
+    @section('title')
+        Users Overview
+    @endsection
 
-{{--        @slot('headTools')--}}
-{{--            <ul class="m-portlet__nav">--}}
-{{--                <li class="m-portlet__nav-item">--}}
-{{--                    <a--}}
-{{--                        class="btn btn-primary m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill"--}}
-{{--                        href="{{ route('manage.store.order.orders.create') }}"--}}
-{{--                    >--}}
-{{--                      <span>--}}
-{{--                            <i class="la la-plus"></i>--}}
-{{--                            <span>New Order</span>--}}
-{{--                      </span>--}}
-{{--                    </a>--}}
-{{--                </li>--}}
-{{--            </ul>--}}
-{{--        @endslot--}}
+    @section('breadcrumbs')
+        {{ Breadcrumbs::render('manage.people.users.list') }}
+    @endsection
 
-        <div class="d-flex">
-            <div class="form-group m-form__group w-100">
-                <label>Search</label>
-                <input
-                    type="text"
-                    class="form-control m-input"
-                    name="search"
-                    value="{{ request('search') }}"
-                >
+    @include('manage.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' => 'Are you sure you want to perform this action?'])
+
+    <div class="card">
+         <!--begin::Card header-->
+         <div class="card-header border-0 pt-6 flex-column">
+            <!--begin::Card title-->
+            <form>
+               @csrf
+            </form>
+            <div class="card-title">
+                <!--begin::Search-->
+                <div class="d-flex align-items-center position-relative my-1">
+                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
+                    <input type="text" data-kt-user-table-filter="search"
+                           class="form-control form-control-solid w-250px ps-13" placeholder="Search user"
+                           id="mySearchInput"/>
+                </div>
+                <!--end::Search-->
             </div>
-
-{{--            <button--}}
-{{--                type="submit"--}}
-{{--                class="btn btn-info h-100 ml-3"--}}
-{{--                style="margin-top:2rem"--}}
-{{--            >--}}
-{{--                <i class="la la-filter"></i>--}}
-{{--                Search--}}
-{{--            </button>--}}
+            <!--begin::Card title-->
+            @include('manage.components.table-filter', [ 'target' => 'users-filter-quick-sidebar' ])
         </div>
-        @slot('formActionsLeft')
-        @endslot
-        @include('manage.components.table-filter', [ 'target' => 'users-filter-quick-sidebar' ])
-        <form>
-            @csrf
-        </form>
-        <div class="table-responsive my-4">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th colspan="2">User</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+        <!--end::Card header-->
+
+        <!--begin::Card body-->
+        <div class="card-body py-4">
+            <!--begin::Table-->
+            <div class="table-responsive">
+                <table class="table table-striped gy-7 gs-7">
+                    <thead>
+                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
+                        <th colspan="2">User</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        @if (request('association'))
+                            <th>Role</th>
+                        @endif
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     @php
                         $statusBadgeMap = [
                             Src\People\User::STATUS_ACTIVE => 'success',
                             Src\People\User::STATUS_BANNED => 'danger',
-                            Src\People\User::STATUS_VERIFYING => 'info',
                         ];
                     @endphp
                     @foreach($users as $user)
-                        @php
-                            $banUserFormId = "ban-user-{$user->id}-form";
-                            $unbanUserFormId = "unban-user-{$user->id}-form";
-                            $releaseUserFormId = "release-user-{$user->id}-form";
-                            $deleteUserFormId = "delete-user-{$user->id}-form";
-                            $verifyUserFormId = "verify-user-{$user->id}-form";
-                        @endphp
+                    @php
+                        $banUserFormId = "ban-user-{$user->id}-form";
+                        $unbanUserFormId = "unban-user-{$user->id}-form";
+                        $deleteUserFormId = "delete-user-{$user->id}-form";
+                        $verifyUserFormId = "verify-user-{$user->id}-form";
+                    @endphp
                         <tr>
                             <td width="48">
-                                <img
-                                    class="m--img-rounded"
-                                    src="{{ $user->portrait->url }}"
-                                    width="48"
-                                    height="48"
-                                >
+                                <img class="m--img-rounded" src="{{ $user->portrait->url }}" width="48" height="48">
                             </td>
                             <td>
-                                <a href="{{ route('manage.people.users.list', [ 'referred_by' => $user->id ]) }}">{{ $user->profile->full_name }}</a>
-
+                                <a href="{{ route('manage.people.users.show', [ 'id' => $user->id ]) }}">{{ $user->profile->full_name }}</a>
                                 @if ($user->isAuthed())
-                                    @component('manage.components.badge', [ 'type' => 'info', 'rounded' => true ])
+                                    @component('manage.components.badge', ['type' => 'info', 'rounded' => true])
                                         You
                                     @endcomponent
                                 @endif
                                 <br>
                                 <span>Affiliate ID: {{ $user->affiliate_id }}</span>
                             </td>
-                            <td>
+                            <td style="text-align: center; vertical-align: middle;">
                                 <a class="m-link" href="mailto:{{ $user->email }}">{{ $user->email }}</a>
                             </td>
-                            <td>
+                            <td style="text-align: center; vertical-align: middle;">
                                 {{ $user->formatted_phone_number }}
                             </td>
-                            <td>
+                            @if (request('association'))
+                                @php
+                                    $roleBadgeMap = [
+                                        0 => 'secondary', 1 => 'info',
+                                    ];
+                                    $isAdmin = $user->associations()->where('id', request('association'))->first()->pivot->is_admin;
+                                @endphp
+                                <td>
+                                    @component('manage.components.badge', [ 'type' => $roleBadgeMap[$isAdmin] ])
+                                        {{$isAdmin == 1 ? 'Admin' : 'Member'}}
+                                    @endcomponent
+                                </td>
+                            @endif
+                            <td style="text-align: center; vertical-align: middle;">
                                 @component('manage.components.badge', [ 'type' => $statusBadgeMap[$user->status] ])
                                     {{ $user->status }}
                                 @endcomponent
                             </td>
                             <td>
-
-{{--                                <a--}}
-{{--                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"--}}
-{{--                                    href="{{ route('manage.people.users.show', [ 'id' => $user->id ]) }}"--}}
-{{--                                    title="Details"--}}
-{{--                                >--}}
-{{--                                    <i class="la la-eye"></i>--}}
-{{--                                </a>--}}
                                 @if ($user->isAuthed())
                                     <a
                                         class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
@@ -216,26 +200,6 @@
                                     </form>
                                 @endif
                                 <button
-                                    class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                    title="Release"
-                                    form="{{ $releaseUserFormId }}"
-                                >
-                                    <i class="la la-sign-out"></i>
-                                </button>
-                                <form
-                                    id="{{ $releaseUserFormId }}"
-                                    class="m-form d-none"
-                                    method="post"
-                                    action="{{ route('manage.people.users.release', [ 'id' => $user->id ]) }}"
-                                    data-confirm="true"
-                                    data-confirm-type="warning"
-                                    data-confirm-title="Release <strong>{{ $user->profile->full_name }}</strong>"
-                                    data-confirm-text="You are about to release this user. This action is irreversible"
-                                >
-                                    @method('post')
-                                    @csrf
-                                </form>
-                                <button
                                     class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
                                     title="Delete"
                                     form="{{ $deleteUserFormId }}"
@@ -259,170 +223,44 @@
                             </td>
                         </tr>
                     @endforeach
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="6">
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            @include('manage.components.pagination', [ 'results' => $users ])
-                            @include('manage.components.pagination-counter', ['results' => $users])
-                        </div>
-                    </td>
-                </tr>
-                </tfoot>
-            </table>
+                </table>
+            </div>
+            <!--end::Table-->
         </div>
-
-    @endcomponent
+        <!--end::Card body-->
+    </div>
 @endsection
 
 @push('quick-sidebar')
     @component('manage.components.table-filter-quick-sidebar', [
         'id' => 'users-filter-quick-sidebar'
     ])
-        <fieldset class="m-form__section m-form__section--first">
-            <div class="form-group m-form__group">
-                <label>Search</label>
-                <input
-                    type="text"
-                    class="form-control m-input"
-                    name="search"
-                    value="{{ request('search') }}"
-                >
+        <fieldset>
+            <div class="mb-10">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control form-control-solid" name="search"
+                    value="{{ request('search') }}">
             </div>
-            <div class="form-group m-form__group">
-                <label>Status</label>
-                <div class="m-checkbox-list">
-                    <label class="m-checkbox">
-                        <input
-                            type="checkbox"
-                            name="status[]"
-                            value="{{ \Src\People\User::STATUS_VERIFYING }}"
-                            {{ in_array(\Src\People\User::STATUS_VERIFYING, request('status', [])) ? 'checked' : '' }}
-                        >
-                        Verifying
-                        <span></span>
-                    </label>
-                    <label class="m-checkbox">
-                        <input
-                            type="checkbox"
-                            name="status[]"
-                            value="{{ \Src\People\User::STATUS_ACTIVE }}"
-                            {{ in_array(\Src\People\User::STATUS_ACTIVE, request('status', [])) ? 'checked' : '' }}
-                        >
+            <div class="mb-10">
+                <label class="form-label">Status</label>
+                <div class="form-check form-check-custom form-check-solid mb-2">
+                    <input class="form-check-input" type="checkbox" name="status[]"
+                        value="{{ \Src\People\User::STATUS_ACTIVE }}"
+                        {{ in_array(\Src\People\User::STATUS_ACTIVE, request('status', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="statusActive">
                         Active
-                        <span></span>
                     </label>
-                    <label class="m-checkbox">
-                        <input
-                            type="checkbox"
-                            name="status[]"
-                            value="{{ \Src\People\User::STATUS_BANNED }}"
-                            {{ in_array(\Src\People\User::STATUS_BANNED, request('status', [])) ? 'checked' : '' }}
-                        >
+                </div>
+
+                <div class="form-check form-check-custom form-check-solid mb-2">
+                    <input class="form-check-input" type="checkbox" name="status[]"
+                        value="{{ \Src\People\User::STATUS_BANNED }}"
+                        {{ in_array(\Src\People\User::STATUS_BANNED, request('status', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="statusBanned">
                         Banned
-                        <span></span>
                     </label>
                 </div>
-                <span class="m-form__help">Status of user</span>
             </div>
-
-            {{--<div class="form-group m-form__group">--}}
-            {{--<label>From</label>--}}
-            <input
-                id="dateFrom"
-                type="date"
-                name="dateFrom"
-                class="form-control m-input"
-                hidden
-                value="{{ request('dateFrom') }}"
-            >
-            {{--</div>--}}
-            {{--<div class="form-group m-form__group">--}}
-            {{--<label>Before</label>--}}
-            <input
-                id="dateBefore"
-                type="date"
-                name="dateBefore"
-                class="form-control m-input"
-                hidden
-                value="{{ request('dateBefore') }}"
-            >
-
-            <div class="form-group m-form__group">
-                <label>Date</label>
-
-                <div class="m-checkbox-list mt-3">
-                    <label class="m-checkbox">
-                        <input
-                            type="radio"
-                            name="specificDate"
-                            value="today"
-                        >
-                        Today
-                        <span></span>
-                    </label>
-                    <label class="m-checkbox">
-                        <input
-                            type="radio"
-                            name="specificDate"
-                            value="one_week"
-                        >
-                        Within a week
-                        <span></span>
-                    </label>
-                    <label class="m-checkbox">
-                        <input
-                            type="radio"
-                            name="specificDate"
-                            value="this_month"
-                        >
-                        This month
-                        <span></span>
-                    </label>
-                    <label class="m-checkbox">
-                        <input
-                            type="radio"
-                            name="specificDate"
-                            value=""
-                            data-target="date_range"
-                            class="{{request('dateFrom')!==null && request('dateBefore')!==null?'radioChecked':''}}"
-                            {{request('dateFrom')!==null && request('dateBefore')!==null?'checked':''}}
-                        >
-                        Date Range
-                        <span></span>
-                    </label>
-                    <input
-                        id="dateRange"
-                        type="text"
-                        name="dateRange"
-                        class="form-control m-input"
-                        @if ((preg_match("/^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[1-2][0-9]|3[0-1])$/",request('dateBefore')))
-                        &&(preg_match("/^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[1-2][0-9]|3[0-1])$/",request('dateFrom'))))
-                        value="{{ date_format(DateTime::createFromFormat('Y-m-d', request('dateFrom')),'m/d/Y')
-                        .' - '.date_format(DateTime::createFromFormat('Y-m-d', request('dateBefore')),'m/d/Y')}}"
-                        @elseif((preg_match("/^[0-9]{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$/",request('dateBefore')))
-                        &&(preg_match("/^[0-9]{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$/",request('dateFrom'))))
-                        value="{{ request('dateFrom').' - '.request('dateBefore') }}"
-                        @else
-                        value=""
-                        @endif
-                    >
-                </div>
-            </div>
-
-            {{--</div>--}}
-{{--            <div class="form-group m-form__group">--}}
-{{--                <label>Date</label>--}}
-{{--                <input--}}
-{{--                    id="dateRange"--}}
-{{--                    type="text"--}}
-{{--                    name="dateRange"--}}
-{{--                    class="form-control m-input"--}}
-{{--                    --}}{{--value="01/01/2018 - 01/15/2018"--}}
-{{--                    --}}{{--value="{{ request('date') }}"--}}
-{{--                >--}}
-{{--            </div>--}}
         </fieldset>
     @endcomponent
 @endpush

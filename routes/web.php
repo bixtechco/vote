@@ -58,4 +58,12 @@ Route::group([
     Route::post('people/admins/banned/{id}', 'Manage\People\AdminsController@ban')->name('manage.people.admins.ban');
     Route::delete('people/admins/banned/{id}', 'Manage\People\AdminsController@unban')->name('manage.people.admins.unban');
     Route::delete('people/admins/{id}', 'Manage\People\AdminsController@destroy')->name('manage.people.admins.destroy');
+
+    // associations
+    Route::get('associations', 'Manage\Voting\AssociationsController@index')->name('manage.voting.associations.list');
+    Route::get('associations/{id}', 'Manage\Voting\AssociationsController@show')->name('manage.voting.associations.show');
+    Route::get('associations/{id}/members', 'Manage\Voting\AssociationsController@members')->name('manage.voting.associations.members');
+    
+    //voting sessions
+    Route::get('voting-sessions', 'Manage\Voting\VotingSessionsController@index')->name('manage.voting.voting-sessions.list');
 });

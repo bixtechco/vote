@@ -4,7 +4,7 @@ namespace Src\Voting\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class AssociationRepository extends Facade
+class AssociationMemberRepository extends Facade
 {
     protected static function getFacadeAccessor()
     {

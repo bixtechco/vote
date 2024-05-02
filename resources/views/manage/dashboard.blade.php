@@ -1,8 +1,19 @@
-@extends('manage.layouts.admin', [ 'pageTitle' => 'Dashboard' ])
+@extends('manage.layouts.admin')
+
+@section('')
+@section('title')
+    Dashboard
+@endsection
+
+@section('breadcrumbs')
+    {{ Breadcrumbs::render('manage.dashboard') }}
+@endsection
 
 @section('content')
+
 @endsection
 
 @section('scripts')
     @parent
-@stop
+
+@endsection

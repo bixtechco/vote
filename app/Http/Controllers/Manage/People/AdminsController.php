@@ -39,7 +39,7 @@ class AdminsController extends ManageAuthedController
     {
         $users = $queried->query()->whereIs([Role::SYSTEM_ADMINISTRATOR, Role::SYSTEM_ROOT])->paginate(20);
 
-        return view('metronic.people.admins.list', compact('users'))->with([
+        return view('manage.people.admins.list', compact('users'))->with([
             'filters' => $queried->filters(),
         ]);
     }
@@ -53,7 +53,7 @@ class AdminsController extends ManageAuthedController
     {
         $abilities = Ability::getAllAdminAbilities();
 
-        return view('metronic.people.admins.create', compact('abilities'));
+        return view('manage.people.admins.create', compact('abilities'));
     }
 
     /**
@@ -91,7 +91,7 @@ class AdminsController extends ManageAuthedController
         $user = User::whereIs([Role::SYSTEM_ADMINISTRATOR, Role::SYSTEM_ROOT])->findOrFail($id);
         $abilities = Ability::getAllAdminAbilities();
 
-        return view('metronic.people.admins.edit', compact('user','abilities'));
+        return view('manage.people.admins.edit', compact('user','abilities'));
     }
 
     /**
@@ -135,7 +135,7 @@ class AdminsController extends ManageAuthedController
     {
         $user = User::whereIs([Role::SYSTEM_ADMINISTRATOR, Role::SYSTEM_ROOT])->findOrFail($id);
 
-        return view('metronic.people.admins.edit-password', compact('user'));
+        return view('manage.people.admins.edit-password', compact('user'));
     }
 
     /**

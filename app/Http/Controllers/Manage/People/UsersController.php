@@ -43,7 +43,7 @@ class UsersController extends ManageAuthedController
     {
         $users = $queried->query()->whereIs(Role::SYSTEM_USER)->latest()->paginate(20);
 
-        return view('metronic.people.users.list', compact('users'))->with([
+        return view('manage.people.users.list', compact('users'))->with([
             'filters' => $queried->filters(),
         ]);
     }
@@ -59,7 +59,7 @@ class UsersController extends ManageAuthedController
     {
         $user = User::whereIs(Role::SYSTEM_USER)->findOrFail($id);
 
-        return view('metronic.people.users.edit', compact('user'));
+        return view('manage.people.users.edit', compact('user'));
     }
 
     /**
@@ -97,7 +97,7 @@ class UsersController extends ManageAuthedController
     {
         $user = User::whereIs(Role::SYSTEM_USER)->findOrFail($id);
 
-        return view('metronic.people.users.edit-password', compact('user'));
+        return view('manage.people.users.edit-password', compact('user'));
     }
 
     /**

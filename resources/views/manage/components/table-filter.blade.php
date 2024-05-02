@@ -1,13 +1,13 @@
 @php
 $hasFilters = $filters->isNotEmpty();
 @endphp
-<section class="table-filter">
-    <div class="row">
-        <div class="col">
+<section class="table-filter w-100">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="">
             @if($hasFilters)
-                <div class="m-list-badge m-list-badge--light-bg my-2">
-                    <span class="m-list-badge__label">Filters:</span>
-                    <ul class="list-inline m-list-badge__items">
+                <div class="m-list-badge m-list-badge--light-bg my-2 d-inline-flex align-items-center gap-10">
+                    <h4 class="m-list-badge__label">Filters:</h4>
+                    <ul class="list-inline m-list-badge__items m-0">
                         @foreach($filters as $filter => $param)
                             @php
                                 $routeFilterRouteParameters = $filters->except($filter)->map(function($param) {
@@ -18,11 +18,11 @@ $hasFilters = $filters->isNotEmpty();
                             }}
                             @endphp
                             <li
-                                class="list-inline-item m-list-badge__item"
+                                class="list-inline-item m-list-badge__item btn btn-outline"
                             >
                                 {{ $param['title'] }}: {{ $param['formattedValue'] }}
                                 <a
-                                    class="btn btn-outline-brand m-btn m-btn--icon m-btn--icon-only m-btn--pill m-list-badge__item-remove ml-2"
+                                    class="ml-2"
                                     href="{{ $removeFilterRoute }}"
                                 >
                                     <i class="la la-times"></i>
@@ -33,15 +33,15 @@ $hasFilters = $filters->isNotEmpty();
                 </div>
             @endif
         </div>
-        <div class="col-sm-3 text-right">
+        <div class="text-right">
             <button
                 id="{{ $target }}-toggler"
-                class="btn btn-outline-info"
-                data-quick-sidebar="{{ $target }}"
+                class="btn btn-outline"
                 type="button"
             >
                 <i class="la la-filter"></i> Filter
             </button>
+
             @if($hasFilters)
                 <a
                     class="btn btn-secondary"
@@ -53,3 +53,6 @@ $hasFilters = $filters->isNotEmpty();
         </div>
     </div>
 </section>
+
+<div class="separator my-5 w-100"></div>
+

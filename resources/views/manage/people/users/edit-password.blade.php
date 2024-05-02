@@ -9,53 +9,34 @@
                 'formAction' => route('manage.people.users.update-password', ['id' => $user->id]),
                 'formMethod' => 'patch',
             ])
-                <fieldset class="m-form__section">
-                    <div class="form-group m-form__group row">
-                        <div class="col-sm-6 m-form__group-sub {{ $errors->has('password') ? 'has-danger' : '' }}">
-                            <label class="form-control-label">New Password *</label>
-                            <input
-                                type="password"
-                                name="password"
-                                class="form-control m-input"
-                            >
-                            <p class="m-form__help">Your password must be at least 8 characters long. To make it stronger, use upper and lower case letters, numbers and symbols. Space( ), quote(\', ") and slash(\) aren\'t allowed.</p>
+                <div class="card p-5 row">
+                    <div class="col-md-9 p-5">
+                        <!--begin::Input group-->
+                        <div class="d-flex flex-column mb-7 fv-row">
+                            <!--begin::Label-->
+                            <label class="required fs-6 fw-semibold form-label mb-2">New Password *</label>
+                            <!--end::Label-->
+                            <input type="password" class="form-control form-control-solid" name="password">
+                            <p class="m-form__help">Your password must be at least 8 characters long. To make it stronger, use upper and lower case letters, numbers and symbols. Space( ), quote(\', ") and slash(\) aren't allowed.</p>
                             @include('manage.components.form-control-feedback', [ 'field' => 'password' ])
                         </div>
-                        <div class="col-sm-6 m-form__group-sub {{ $errors->has('password_confirmation') ? 'has-danger' : '' }}">
-                            <label class="form-control-label">Password Confirmation *</label>
-                            <input
-                                type="password"
-                                name="password_confirmation"
-                                class="form-control"
-                            >
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="d-flex flex-column mb-7 fv-row">
+                            <!--begin::Label-->
+                            <label class="required fs-6 fw-semibold form-label mb-2">Password Confirmation *</label>
+                            <!--end::Label-->
+                            <input type="password" class="form-control form-control-solid" name="password_confirmation">
                             <p class="m-form__help">Retype the new password you entered.</p>
                             @include('manage.components.form-control-feedback', [ 'field' => 'password_confirmation' ])
                         </div>
+                        <!--end::Input group-->
                     </div>
-                </fieldset>
+                </div>
 
                 @slot('formActionsLeft')
-                    <button
-                        type="submit"
-                        class="btn btn-brand"
-                    >
-                        Submit
-                    </button>
-                    <button
-                        type="reset"
-                        class="btn btn-secondary"
-                    >
-                        Reset
-                    </button>
-                @endslot
-
-                @slot('formActionsRight')
-                    <a
-                        class="btn btn-link m-link m--font-bold text-muted"
-                        href="{{ route('manage.people.users.list') }}"
-                    >
-                        Cancel
-                    </a>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
                 @endslot
             @endcomponent
         </div>

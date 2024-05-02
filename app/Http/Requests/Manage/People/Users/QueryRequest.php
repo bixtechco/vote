@@ -7,6 +7,7 @@ use Diver\Database\Eloquent\Builder;
 use Diver\Http\Requests\QueryRequest as Request;
 use Src\People\Membership;
 use Src\People\User;
+use Src\Voting\Association;
 
 class QueryRequest extends Request
 {
@@ -29,6 +30,7 @@ class QueryRequest extends Request
         'dateFrom',
         'dateBefore',
         'specificDate',
+        'association'
     ];
 
     /**
@@ -218,5 +220,21 @@ class QueryRequest extends Request
                 $query->whereRaw('MONTH(created_at) = ?',Carbon::now('Asia/Kuala_Lumpur')->month);
             });
         }
+    }
+
+    protected function paramAssociation($value)
+    {
+        $association = Association::findOrFail($value);
+        return [
+            'title' => 'Association',
+            'formattedValue' => $association->name
+        ];
+    }
+
+    protected function filterAssociation(Builder $query, $value)
+    {
+        $query->whereHas('associations', function (Builder $query) use ($value) {
+            $query->where('association_id', $value);
+        });
     }
 }

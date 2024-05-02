@@ -2,21 +2,25 @@
 
 namespace Src\People;
 
-use Diver\Database\Eloquent\Traits\SoftDeleteModel;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Src\Auth\Role;
+use Src\Auth\Ability;
+use Src\People\UserProfile;
+use Src\Voting\Association;
+use Src\People\UserPortrait;
+use Src\Reward\Reward\Reward;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Src\Auth\Ability;
-use Src\Auth\Role;
-use Silber\Bouncer\Database\HasRolesAndAbilities;
-use Silber\Bouncer\Database\Queries\Roles as RolesQuery;
-use Src\Reward\Reward\Reward;
-use Src\Reward\Reward\RewardEligibleMembership;
-use Src\Reward\Reward\RewardTransaction;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Src\Reward\Reward\RewardTransaction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
+use Src\Reward\Reward\RewardEligibleMembership;
+use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Diver\Database\Eloquent\Traits\SoftDeleteModel;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Silber\Bouncer\Database\Queries\Roles as RolesQuery;
+use Src\Voting\VotingSession;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -384,4 +388,17 @@ class User extends Authenticatable implements JWTSubject
         return $user;
     }
 
+    public function associations()
+    {
+        return $this->belongsToMany(Association::class, 'association_members', 'user_id', 'association_id')
+            ->withPivot('is_admin')
+            ->withTimestamps();
+    }
+
+    // public function votingSessions()
+    // {
+    //     return $this->belongsToMany(VotingSession::class, 'voting_session_members', 'user_id', 'voting_session_id')
+    //         ->withPivot('is_admin')
+    //         ->withTimestamps();
+    // }
 }

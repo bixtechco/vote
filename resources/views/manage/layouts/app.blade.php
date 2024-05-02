@@ -1,81 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! printHtmlAttributes('html') !!}>
+<!--begin::Head-->
 <head>
+    <base href=""/>
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    @yield('meta')
-    <title>{{ $pageTitle }} | {{ config('app.name') }}</title>
-    <link rel='icon' href='favicon.ico' type='image/x-icon'/>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content=""/>
+    <link rel="canonical" href=""/>
 
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,500,500i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
-    <link href="{{ asset('themes/metronic/vendors.bundle.css') }}" rel="stylesheet">
-    <link href="{{ asset('themes/metronic/style.bundle.css') }}" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" rel="stylesheet" />
-    <link href="{{ asset('manage/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('manage/print.css') }}" media="print" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/min/basic.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/min/dropzone.min.css" />
+    {!! includeFavicon() !!}
 
-    <link href='{{ URL::asset('js/fullcalendar/main.css') }}' rel='stylesheet' />
-    <link href='{{ URL::asset('js/fullcalendar/custom.css') }}' rel='stylesheet' />
-    <script src='{{ URL::asset('js/fullcalendar/main.js') }}'></script>
+    <!--begin::Fonts-->
+    {!! includeFonts() !!}
+    <!--end::Fonts-->
 
-    @stack('style')
+    <!--begin::Global Stylesheets Bundle(used by all pages)-->
+    @foreach(getGlobalAssets('css') as $path)
+        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    @endforeach
+    <!--end::Global Stylesheets Bundle-->
+
+    <!--begin::Vendor Stylesheets(used by this page)-->
+    @foreach(getVendors('css') as $path)
+        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    @endforeach
+    <!--end::Vendor Stylesheets-->
+
+    <!--begin::Custom Stylesheets(optional)-->
+    @foreach(getCustomCss() as $path)
+        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    @endforeach
+    <!--end::Custom Stylesheets-->
 </head>
+<!--end::Head-->
 
-@php
-    $bodyClass = isset($bodyClass) ? (array)$bodyClass : ['
-        m--skin-
-        m-header--fixed
-        m-header--fixed-mobile
-        m-aside-left--enabled
-        m-aside-left--skin-dark
-        m-aside-left--fixed
-        m-aside-left--offcanvas
-        m-footer--push
-        m-aside--offcanvas-default
-    '];
-    $bodyClass = implode(' ', $bodyClass)
-@endphp
-<body
-    class="{{ $bodyClass }}"
-    data-route="{{ Route::currentRouteName() }}"
->
-    <section class="m-grid m-grid--hor m-grid--root m-page">
-        @yield('page')
-    </section>
-    <aside id="m_scroll_top" class="m-scroll-top">
-        <i class="la la-arrow-up"></i>
-    </aside>
-    @stack('quick-sidebar')
-    <script src="{{ asset('themes/metronic/vendors.bundle.js') }}"></script>
-    <script src="{{ asset('themes/metronic/scripts.bundle.js') }}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-{{--    <script src="https://cdn.ckeditor.com/ckeditor5/19.1.1/classic/ckeditor.js"></script>--}}
-    <script src="{{ asset('utils/ckeditor/ckeditor.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/min/dropzone.min.js"></script>
-    <script type="module" src="{{ asset('utils/js/app.js') }}"></script>
-    <script type="module" src="{{ asset('manage/app.js') }}"></script>
-    <script type="module" src="{{ asset('manage/partner.js') }}"></script>
-    <script src="{{ asset('manage/components/quickSidebar.js') }}"></script>
-{{--    <script type="module" src="{{ asset('utils/js/app.js') }}?v={{ now()->timestamp }}"></script>--}}
-{{--    <script type="module" src="{{ asset('manage/app.js') }}?v={{ now()->timestamp }}"></script>--}}
-{{--    <script type="module" src="{{ asset('manage/partner.js') }}?v={{ now()->timestamp }}"></script>--}}
-{{--    <script src="{{ asset('manage/components/quickSidebar.js') }}?v={{ now()->timestamp }}"></script>--}}
-    @stack('script')
-    @yield('scripts')
+<!--begin::Body-->
+<body {!! printHtmlClasses('body') !!} {!! printHtmlAttributes('body') !!}>
+{{--@include('metronic/layouts/theme-mode/_init')--}}
+
+@yield('page')
+@stack('quick-sidebar')
+<!--begin::Javascript-->
+<!--begin::Global Javascript Bundle(mandatory for all pages)-->
+@foreach(getGlobalAssets() as $path)
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+@endforeach
+<!--end::Global Javascript Bundle-->
+
+<!--begin::Vendors Javascript(used by this page)-->
+@foreach(getVendors('js') as $path)
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+@endforeach
+<!--end::Vendors Javascript-->
+
+<!--begin::Custom Javascript(optional)-->
+@foreach(getCustomJs() as $path)
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+@endforeach
+
+<script type="module" src="{{ asset('manage/app.js') }}"></script>
+<!--end::Custom Javascript-->
+@stack('scripts')
+
+<!--end::Javascript-->
+
 </body>
+<!--end::Body-->
 
 </html>

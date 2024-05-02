@@ -1,7 +1,7 @@
 @extends('manage.layouts.admin', [ 'pageTitle' => 'Add User' ])
 
 @section('content')
-    <div class="row">
+    <div class="row p-5">
         <div class="col-lg-9">
             @component('manage.components.portlet', [
                 'headText' => 'User',

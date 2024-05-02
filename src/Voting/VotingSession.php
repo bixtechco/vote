@@ -24,6 +24,25 @@ class VotingSession extends Model
     CONST STATUS_COMPLETED = 2;
     CONST STATUS_INACTIVE = 3;
 
+    CONST STATUSES = [
+        self::STATUS_DRAFT => [
+            'name' => 'Draft',
+            'color' => 'info'
+        ],
+        self::STATUS_ACTIVE => [
+            'name' => 'Active',
+            'color' => 'primary'
+        ],
+        self::STATUS_COMPLETED => [
+            'name' => 'Completed',
+            'color' => 'success'
+        ],
+        self::STATUS_INACTIVE => [
+            'name' => 'Inactive',
+            'color' => 'danger'
+        ],
+    ];
+
     public function association()
     {
         return $this->belongsTo(Association::class, 'association_id');

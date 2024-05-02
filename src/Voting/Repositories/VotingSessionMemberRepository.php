@@ -21,7 +21,7 @@ class VotingSessionMemberRepository
     {
         $data = data_all($input, [
             'voting_session_member.association_id',
-            'voting_session_member.voting_session_member_id',
+            'voting_session_member.voting_session_id',
             'voting_session_member.user_id',
             'voting_session_member.votes',
         ]);
@@ -46,7 +46,7 @@ class VotingSessionMemberRepository
     {
         $data = data_only($input, [
             'voting_session_member.association_id',
-            'voting_session_member.voting_session_member_id',
+            'voting_session_member.voting_session_id',
             'voting_session_member.user_id',
             'voting_session_member.votes',
         ]);

@@ -17,6 +17,6 @@ class DashboardController extends ManageAuthedController
 {
     public function dashboard()
     {
-        return view('metronic.dashboard');
+        return view('manage.dashboard');
     }
 }

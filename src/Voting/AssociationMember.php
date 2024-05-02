@@ -19,6 +19,8 @@ class AssociationMember extends Model
 
     ];
 
+    
+
     public function association()
     {
         return $this->belongsTo(Association::class, 'association_id');

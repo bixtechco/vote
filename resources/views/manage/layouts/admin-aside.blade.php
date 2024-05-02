@@ -1,86 +1,95 @@
-<div
-    id="m_aside_left"
-    class="m-grid__item m-aside-left m-aside-left--skin-dark"
->
-    <button
-        id="m_aside_left_close_btn"
-        class="m-aside-left-close m-aside-left-close--skin-dark"
-    >
-        <i class="la la-close"></i>
-    </button>
-    <div
-        id="m_ver_menu"
-        class="m-aside-menu m-aside-menu--skin-dark m-aside-menu--submenu-skin-dark"
-        m-menu-vertical="1"
-        m-menu-scrollable="1"
-        m-menu-dropdown-timeout="500"
-    >
-        <ul class="m-menu__nav m-menu__nav--dropdown-submenu-arrow">
-            <li
-                class="m-menu__item {{ route::has('manage.dashboard')? 'm-menu__item--active':'' }}"
-                aria-haspopup="true"
-            >
-                <a
-                    class="m-menu__link"
-                    href="{{ route('manage.dashboard') }}"
-                >
-                    <i class="m-menu__link-icon flaticon-line-graph"></i>
-                    <span class="m-menu__link-title">
-                      <span class="m-menu__link-wrap">
-                        <span class="m-menu__link-text">Statistics</span>
-                      </span>
+<!--begin::Sidebar-->
+<div id="kt_app_sidebar" class="app-sidebar flex-column" data-kt-drawer="true" data-kt-drawer-name="app-sidebar"
+     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px"
+     data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
+    <!--begin::Wrapper-->
+    <div id="kt_app_sidebar_wrapper" class="app-sidebar-wrapper">
+        <div class="hover-scroll-y my-5 my-lg-2 mx-4" data-kt-scroll="true"
+             data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto"
+             data-kt-scroll-dependencies="#kt_app_header" data-kt-scroll-wrappers="#kt_app_sidebar_wrapper"
+             data-kt-scroll-offset="5px">
+            <!--begin::Sidebar menu-->
+            <div id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false"
+                 class="app-sidebar-menu-primary menu menu-column menu-rounded menu-sub-indention menu-state-bullet-primary px-3 mb-5">
+                <!--begin:Menu item-->
+                <div class="menu-item here show menu-accordion">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-home-2 fs-2"></i>
+                        </span>
+
+                        <a href="{{ route('manage.dashboard') }}" class="menu-title">Dashboards</a>
+                        {{-- <span class="menu-arrow"></span> --}}
                     </span>
-                </a>
-            </li>
+                    <!--end:Menu link-->
+                </div>
+                <!--end:Menu item-->
+                <!--begin:Menu item-->
+                <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+											<span class="menu-icon">
+												<i class="ki-outline ki-gift fs-2"></i>
+											</span>
+											<span class="menu-title">User Management</span>
+											<span class="menu-arrow"></span>
+										</span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        <!--begin:Menu item-->
+                        <div class="menu-item menu-accordion">
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{route('manage.people.users.list')}}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">User List</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{route('manage.people.admins.list')}}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Admin list</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end:Menu sub-->
+                </div>
+                <!--end:Menu item-->
+                <div class="menu-item here show menu-accordion">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-people fs-2"></i>
+                        </span>
 
-            @canany([
-                \Src\Auth\Ability::MANAGE_ROOTS,
-                \Src\Auth\Ability::MANAGE_ADMINISTRATORS,
-            ])
-                <li class="m-menu__section">
-                    <h4 class="m-menu__section-text">People</h4>
-                </li>
-            @endCanany
-            @canany([
-                \Src\Auth\Ability::MANAGE_ROOTS,
+                        <a href="{{ route('manage.voting.associations.list') }}" class="menu-title">Associations</a>
+                        {{-- <span class="menu-arrow"></span> --}}
+                    </span>
+                    <!--end:Menu link-->
+                </div>
 
-            ])
-                <li
-                        class="m-menu__item {{ route::has('manage.people.admins.*')? 'm-menu__item--active':'' }}"
-                        aria-haspopup="true"
-                >
+                <div class="menu-item here show menu-accordion">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-notepad fs-2"></i>
+                        </span>
 
-                    <a
-                            class="m-menu__link m-m"
-                            href="{{ route('manage.people.admins.list') }}"
-                    >
-                        <i class="m-menu__link-icon flaticon-users"></i>
-                        <span class="m-menu__link-text">Admins</span>
-                    </a>
-                </li>
-            @endCanany
-            @canany([
-                \Src\Auth\Ability::MANAGE_ROOTS,
-                \Src\Auth\Ability::MANAGE_ADMINISTRATORS,
-            ])
-                @canany([
-                    \Src\Auth\Ability::MANAGE_ROOTS,
-                    \Src\Auth\Ability::MANAGE_USERS,
-                ])
-                <li
-                        class="m-menu__item {{route::has('manage.people.users.*')? 'm-menu__item--active':'' }}"
-                        aria-haspopup="true"
-                >
-                    <a
-                            class="m-menu__link m-m"
-                            href="{{ route('manage.people.users.list') }}"
-                    >
-                        <i class="m-menu__link-icon flaticon-users"></i>
-                        <span class="m-menu__link-text">Users</span>
-                    </a>
-                </li>
-                @endCanany
-            @endcan
-        </ul>
+                        <a href="{{ route('manage.voting.voting-sessions.list') }}" class="menu-title">Voting Sessions</a>
+                        {{-- <span class="menu-arrow"></span> --}}
+                    </span>
+                    <!--end:Menu link-->
+                </div>
+            </div>
+            <!--end::Sidebar menu-->
+        </div>
     </div>
+    <!--end::Wrapper-->
 </div>
+<!--end::Sidebar-->

@@ -19,7 +19,7 @@ class ProfileController extends ManageAuthedController
     {
         $user = Auth::user();
 
-        return view('metronic.account.profile.edit', compact('user'));
+        return view('manage.account.profile.edit', compact('user'));
     }
 
     /**
@@ -52,7 +52,7 @@ class ProfileController extends ManageAuthedController
      */
     public function editPassword()
     {
-        return view('metronic.account.profile.edit-password');
+        return view('manage.account.profile.edit-password');
     }
 
     /**

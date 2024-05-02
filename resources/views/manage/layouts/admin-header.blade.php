@@ -1,19 +1,14 @@
-<header
-    id="m_header"
-    class="m-grid__item m-header"
-    m-minimize-offset="200"
-    m-minimize-mobile-offset="200"
->
-    <div class="m-container m-container--fluid m-container--full-height">
-        <div class="m-stack m-stack--ver m-stack--desktop">
-            @include('manage.layouts.admin-header-brand')
-            <div
-                id="m_header_nav"
-                class="m-stack__item m-stack__item--fluid m-header-head"
-            >
-                @include('manage.layouts.admin-header-menu')
-                @include('manage.layouts.admin-header-topbar')
-            </div>
-        </div>
+<div id="kt_app_header" class="app-header d-flex flex-column flex-stack">
+<!--begin::Header main-->
+    <div class="d-flex flex-stack flex-grow-1">
+        @include(config('settings.KT_THEME_LAYOUT_DIR').'/admin-header-brand')
+        <!--begin::Navbar-->
+        @include(config('settings.KT_THEME_LAYOUT_DIR').'/admin-header-menu')
     </div>
-</header>
+    <!--begin::Separator-->
+{{--    <div class="app-header-separator"></div>--}}
+    <!--end::Separator-->
+</div>
+<!--end::Header-->
+
+

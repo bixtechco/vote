@@ -4,7 +4,7 @@
     $formMethod = $formMethod ?? 'post';
 @endphp
 @if ($formAction)
-    <div class="modal fade" id="{{ $id  }}" tabindex="-1" role="dialog" aria-labelledby=" {{$id}}Label" aria-hidden="true">
+    <div class="modal position-absolute" id="{{ $id  }}" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form
@@ -19,16 +19,16 @@
                 >
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{$title}}</h5>
+                        <h5 class="modal-title">{{$title}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <i aria-hidden="true" class="ki ki-close"></i>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" id="{{ $id }}ModalBody">
                         {{ $slot }}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="cancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">{{$submitButton}}</button>
                     </div>
                 </form>
@@ -36,21 +36,21 @@
         </div>
     </div>
 @else
-    <div class="modal fade" id="{{ $id  }}" tabindex="-1" role="dialog" aria-labelledby=" {{$id}}Label" aria-hidden="true">
+    <div class="modal position-absolute" id="{{ $id  }}" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{$title}}</h5>
+                    <h5 class="modal-title">{{$title}}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <i aria-hidden="true" class="ki ki-close"></i>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="{{ $id }}ModalBody">
                     {{ $slot }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">{{$submitButton}}</button>
+                    <button id="cancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">{{$submitButton}}</button>
                 </div>
             </div>
         </div>

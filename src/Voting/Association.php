@@ -22,6 +22,17 @@ class Association extends Model
     CONST STATUS_ACTIVE = 0;
     CONST STATUS_INACTIVE = 1;
 
+    CONST STATUSES = [
+        self::STATUS_ACTIVE => [
+            'name' => 'Active',
+            'color' => 'success',
+        ],
+        self::STATUS_INACTIVE => [
+            'name' => 'Inactive',
+            'color' => 'danger',
+        ],
+    ];
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -15,32 +15,8 @@
                     $roles = \Src\Auth\Role::whereIn('name', $authedUserAccessibleRoles)->get()
                 @endphp
 
-                <div class="row">
-{{--                    <div class="col-md-3 order-md-1">--}}
-{{--                        <fieldset class="m-form__section m-form__section--first">--}}
-{{--                            <div class="form-group m-form__group {{ $errors->has('portrait') ? 'has-danger' : '' }}">--}}
-{{--                                <label class="form-control-label">Portrait</label>--}}
-{{--                                <div--}}
-{{--                                    class="file-input-preview file-input-preview--sm mx-auto "--}}
-{{--                                    data-size-ratio="1"--}}
-{{--                                >--}}
-{{--                                    <img--}}
-{{--                                        src="{{ $user->portrait->url }}"--}}
-{{--                                        data-placeholder="http://via.placeholder.com/480x480"--}}
-{{--                                    >--}}
-{{--                                </div>--}}
-{{--                                <input--}}
-{{--                                    type="file"--}}
-{{--                                    class="d-none"--}}
-{{--                                    name="portrait"--}}
-{{--                                    accept="image/gif, image/jpeg, image/png"--}}
-{{--                                    data-file-preview--}}
-{{--                                >--}}
-{{--                                @include('manage.components.form-control-feedback', [ 'field' => 'portrait' ])--}}
-{{--                            </div>--}}
-{{--                        </fieldset>--}}
-{{--                    </div>--}}
-                    <div class="col-md-12">
+                <div class="card p-5 row">
+                    <div class="col-md-12 p-5">
                         <fieldset class="m-form__section m-form__section--first">
                             <div class="form-group m-form__group {{ $errors->has('full_name') ? 'has-danger' : '' }}">
                                 <label class="form-control-label">Full name *</label>

@@ -1,4 +1,4 @@
-@extends('metronic.layouts.admin')
+@extends('manage.layouts.admin')
 
 @section('content')
 
@@ -9,19 +9,20 @@
     @section('breadcrumbs')
         {{ Breadcrumbs::render('manage.people.admins.list') }}
     @endsection
+    @include('manage.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' => 'Are you sure you want to perform this action?'])
 
     <div class="card">
         <!--begin::Card header-->
-        <div class="card-header border-0 pt-6">
+        <div class="card-header border-0 pt-6 flex-column">
             <!--begin::Card title-->
-            @include('metronic.components.table-filter', [ 'target' => 'users-filter-quick-sidebar' ])
-            <form>
-                @csrf
-            </form>
+            {{-- <form>
+               @csrf
+            </form> --}}
             <!--begin::Card title-->
+            @include('manage.components.table-filter', [ 'target' => 'users-filter-quick-sidebar' ])
 
             <!--begin::Card toolbar-->
-            <div class="card-toolbar">
+            <div class="card-toolbar align-self-end">
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add user-->
@@ -41,9 +42,9 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-striped gy-7 gs-7">
                     <thead>
-                    <tr>
+                    <tr class="fw-bold fs-6 text-gray-800">
                         <th colspan="2">User</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -95,7 +96,7 @@
                                 {{ $user->role->name }}
                             </td>
                             <td>
-                                @component('metronic.components.badge', [ 'type' => $statusBadgeMap[$user->status] ])
+                                @component('manage.components.badge', [ 'type' => $statusBadgeMap[$user->status] ])
                                     {{ $user->status }}
                                 @endcomponent
                             </td>
@@ -134,7 +135,7 @@
                                         <button
                                             class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
                                             title="Ban"
-                                            form="{{ $banUserFormId }}"
+                                            onclick="confirmAction('Ban', 'Are you sure you want to ban this admin?', '{{ $banUserFormId }}')"
                                         >
                                             <i class="la la-lock"></i>
                                         </button>
@@ -156,7 +157,7 @@
                                         <button
                                             class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
                                             title="Unban"
-                                            form="{{ $unbanUserFormId }}"
+                                            onclick="confirmAction('Unban', 'Are you sure you want to unban this admin?', '{{ $unbanUserFormId }}')"
                                         >
                                             <i class="la la-unlock-alt"></i>
                                         </button>
@@ -177,7 +178,7 @@
                                     <button
                                         class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
                                         title="Delete"
-                                        form="{{ $deleteUserFormId }}"
+                                        onclick="confirmAction('Delete', 'Are you sure you want to delete this admin?', '{{$deleteUserFormId}}')"
                                     >
                                         <i class="la la-trash"></i>
                                     </button>
@@ -199,6 +200,16 @@
                         </tr>
                     @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6">
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    @include('manage.components.pagination', [ 'results' => $users ])
+                                    @include('manage.components.pagination-counter', ['results' => $users])
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <!--end::Table-->
@@ -207,3 +218,39 @@
     </div>
 
 @endsection
+
+@push('quick-sidebar')
+    @component('manage.components.table-filter-quick-sidebar', [
+        'id' => 'users-filter-quick-sidebar'
+    ])
+        <fieldset>
+            <div class="mb-10">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control form-control-solid" name="search"
+                    value="{{ request('search') }}">
+            </div>
+            <div class="mb-10">
+                <label class="form-label">Status</label>
+                <div class="form-check form-check-custom form-check-solid mb-2">
+                    <input class="form-check-input" type="checkbox" name="status[]"
+                        value="{{ \Src\People\User::STATUS_ACTIVE }}"
+                        {{ in_array(\Src\People\User::STATUS_ACTIVE, request('status', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="statusActive">
+                        Active
+                    </label>
+                </div>
+
+                <div class="form-check form-check-custom form-check-solid mb-2">
+                    <input class="form-check-input" type="checkbox" name="status[]"
+                        value="{{ \Src\People\User::STATUS_BANNED }}"
+                        {{ in_array(\Src\People\User::STATUS_BANNED, request('status', [])) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="statusBanned">
+                        Banned
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    @endcomponent
+@endpush
+
+
