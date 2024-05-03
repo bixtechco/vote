@@ -2,6 +2,11 @@
 
 @section('content')
 
+    @component('manage.components.portlet', [
+        'headText' => 'Admins',
+        'headIcon' => 'flaticon-people',
+    ])
+
     @section('title')
         Admins Overview
     @endsection
@@ -216,7 +221,7 @@
         </div>
         <!--end::Card body-->
     </div>
-
+    @endcomponent
 @endsection
 
 @push('quick-sidebar')

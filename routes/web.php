@@ -66,4 +66,5 @@ Route::group([
     
     //voting sessions
     Route::get('voting-sessions', 'Manage\Voting\VotingSessionsController@index')->name('manage.voting.voting-sessions.list');
+    Route::get('voting-sessions/{id}', 'Manage\Voting\VotingSessionsController@show')->name('manage.voting.voting-sessions.show');
 });

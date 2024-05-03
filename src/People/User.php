@@ -21,6 +21,7 @@ use Diver\Database\Eloquent\Traits\SoftDeleteModel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Silber\Bouncer\Database\Queries\Roles as RolesQuery;
 use Src\Voting\VotingSession;
+use Src\Voting\VotingSessionMember;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -395,10 +396,15 @@ class User extends Authenticatable implements JWTSubject
             ->withTimestamps();
     }
 
-    // public function votingSessions()
-    // {
-    //     return $this->belongsToMany(VotingSession::class, 'voting_session_members', 'user_id', 'voting_session_id')
-    //         ->withPivot('is_admin')
-    //         ->withTimestamps();
-    // }
+    public function votingSessions()
+    {
+        return $this->belongsToMany(VotingSession::class, 'voting_session_members', 'user_id', 'voting_session_id')
+            ->withPivot('votes')
+            ->withTimestamps();
+    }
+
+    public function votingSessionMembers()
+    {
+        return $this->hasMany(VotingSessionMember::class, 'user_id');
+    }
 }

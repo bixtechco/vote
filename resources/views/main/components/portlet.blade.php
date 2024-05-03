@@ -56,12 +56,12 @@
             </div>
             <footer class="m-portlet__foot m-portlet__foot--fit">
                 <div class="m-form__actions m-form__actions--solid">
-                    <div class="row">
+                    <div class="row mt-3">
                         <div class="col-8 col-xl-{{ 6 - $formXlColOffset }} offset-xl-{{ $formXlColOffset }}">
                             {{ $formActionsLeft }}
                         </div>
                         @if ($formActionsRight)
-                            <div class="col-4 col-xl-{{ 6 - $formXlColOffset }} m--align-right">
+                            <div class="col-4 col-xl-{{ 6 - $formXlColOffset }} m--align-right text-right">
                                 {{ $formActionsRight }}
                             </div>
                         @endif

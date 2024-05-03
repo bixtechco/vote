@@ -14,6 +14,7 @@
     $formXlColOffset = $formXlColOffset ?? 1;
     $formFiles = $formFiles ?? false;
     $formId=$formId??'';
+    $backUrl = $backUrl ?? false;
 @endphp
 <section class="m-portlet {{ $unair ? 'm-portlet--unair' : '' }} {{ $responsiveMobile ? 'm-portlet--responsive-mobile' : '' }} {{ $responsiveMobileAndTablet ? 'm-portlet--responsive-tablet-and-mobile' : '' }}">
     @if ($headText)
@@ -25,7 +26,13 @@
                             <i class="{{ $headIcon }}"></i>
                         </span>
                     @endif
-                    <h3 class="m-portlet__head-text">{{ $headText }}</h3>
+                    <h3 class="m-portlet__head-text">
+                        @if($backUrl) 
+                        <a href="{{$backUrl}}" class="btn btn-icon btn-shadow btn-active-color-primary rotate"><span class="ki-duotone ki-arrow-left fs-3 rotate-180 ms-1 text-hover-primary">
+                            <span class="path1"></span><span class="path2"></span></span>
+                        </a>
+                        @endif
+                        {{ $headText }}</h3>
                 </div>
             </div>
             @if ($headTools)
@@ -56,12 +63,12 @@
             </div>
             <footer class="m-portlet__foot m-portlet__foot--fit">
                 <div class="m-form__actions m-form__actions--solid">
-                    <div class="row">
+                    <div class="row mt-3">
                         <div class="col-8 col-xl-{{ 6 - $formXlColOffset }} offset-xl-{{ $formXlColOffset }}">
                             {{ $formActionsLeft }}
                         </div>
                         @if ($formActionsRight)
-                            <div class="col-4 col-xl-{{ 6 - $formXlColOffset }} m--align-right">
+                            <div class="col-4 col-xl-{{ 6 - $formXlColOffset }} m--align-right text-right">
                                 {{ $formActionsRight }}
                             </div>
                         @endif

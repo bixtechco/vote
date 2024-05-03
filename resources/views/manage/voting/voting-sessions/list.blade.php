@@ -1,6 +1,16 @@
 @extends('manage.layouts.admin')
 
+@php
+    $redirectFrom = request()->get('redirectFrom') ?? false;
+@endphp
+
 @section('content')
+    @component('manage.components.portlet', [
+        'headText' => 'Voting Sessions',
+        'headIcon' => 'flaticon-people',
+        'backUrl' => $redirectFrom
+
+    ])
     @section('title')
         Voting Sessions Overview
     @endsection
@@ -10,18 +20,6 @@
     <div class="card">
         <!--begin::Card header-->
         <div class="card-header border-0 pt-6">
-            <!--begin::Card title-->
-            <div class="card-title">
-                <!--begin::Search-->
-                <div class="d-flex align-items-center position-relative my-1">
-                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search"
-                           class="form-control form-control-solid w-250px ps-13" placeholder="Search voting session"
-                           id="mySearchInput"/>
-                </div>
-                <!--end::Search-->
-            </div>
-            <!--begin::Card toolbar-->
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
@@ -51,7 +49,7 @@
                     @foreach($votingSessions as $votingSession)
                         <tr>
                             <td colspan="2">
-                                {{ $votingSession->association->name }}
+                                <a href="{{ route('manage.voting.associations.list', ['search' => $votingSession->association->name, 'redirectFrom' => route('manage.voting.voting-sessions.list') ]) }}" class="text-gray-800 text-hover-primary fw-bold mb-3">{{ $votingSession->association->name }}</a>
                             </td>
                             <td>
                                 {{ $votingSession->name }}
@@ -64,7 +62,7 @@
                             <td>
                                 <a
                                     class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('manage.voting.associations.show', [ 'id' => $votingSession->id ]) }}"
+                                    href="{{ route('manage.voting.voting-sessions.show', [ 'id' => $votingSession->id ]) }}"
                                     title="Edit"
                                 >
                                     <i class="la la-eye"></i>
@@ -78,6 +76,7 @@
         </div>
         <!--end::Card body-->
     </div>
+    @endcomponent
 @endsection
 
 @push('quick-sidebar')

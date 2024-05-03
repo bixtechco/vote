@@ -48,6 +48,15 @@ class UsersController extends ManageAuthedController
         ]);
     }
 
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        $data['associations_joined'] = $user->associations()->count();
+        $data['voting_sessions_joined'] = $user->votingSessions()->count();
+        $data['voting_sessions_voted'] = $user->votingSessionMembers()->whereNotNull('votes')->count();
+        return view('manage.people.users.show', compact('user', 'data'));
+    }
+
     /**
      * Edit action
      *

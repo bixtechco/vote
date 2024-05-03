@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manage\Voting;
 
 use Src\Auth\Ability;
+use Src\Voting\Association;
 use App\Http\Controllers\ManageAuthedController;
 use App\Http\Requests\Manage\Voting\Associations\QueryRequest;
 
@@ -35,5 +36,13 @@ class AssociationsController extends ManageAuthedController
         return view('manage.voting.associations.list', compact('associations'))->with([
             'filters' => $queried->filters(),
         ]);
+    }
+
+    //show
+    public function show($id)
+    {
+        $association = Association::findOrFail($id);
+
+        return view('manage.voting.associations.show', compact('association'));
     }
 }

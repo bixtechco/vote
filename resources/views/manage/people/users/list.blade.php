@@ -1,6 +1,16 @@
 @extends('manage.layouts.admin')
 
+@php
+    $redirectFrom = request()->get('redirectFrom') ?? false;
+@endphp
+
+
 @section('content')
+    @component('manage.components.portlet', [
+        'headText' => 'Users',
+        'headIcon' => 'flaticon-people',
+        'backUrl' => $redirectFrom
+    ])
     @section('title')
         Users Overview
     @endsection
@@ -18,16 +28,6 @@
             <form>
                @csrf
             </form>
-            <div class="card-title">
-                <!--begin::Search-->
-                <div class="d-flex align-items-center position-relative my-1">
-                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search"
-                           class="form-control form-control-solid w-250px ps-13" placeholder="Search user"
-                           id="mySearchInput"/>
-                </div>
-                <!--end::Search-->
-            </div>
             <!--begin::Card title-->
             @include('manage.components.table-filter', [ 'target' => 'users-filter-quick-sidebar' ])
         </div>
@@ -103,6 +103,13 @@
                                 @endcomponent
                             </td>
                             <td>
+                                <a
+                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                                    href="{{ route('manage.people.users.show', ['id' => $user->id]) }}"
+                                    title="Details"
+                                >
+                                    <i class="la la-eye"></i>
+                                </a>
                                 @if ($user->isAuthed())
                                     <a
                                         class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
@@ -123,7 +130,7 @@
                                     <button
                                         class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
                                         title="Verify"
-                                        form="{{ $verifyUserFormId }}"
+                                        onclick="confirmAction('Verify', 'Are you sure you want to verify this user?', '{{$verifyUserFormId}}')"
                                     >
                                         <i class="la la-check"></i>
                                     </button>
@@ -159,7 +166,7 @@
                                     <button
                                         class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
                                         title="Ban"
-                                        form="{{ $banUserFormId }}"
+                                        onclick="confirmAction('Ban', 'Are you sure you want to ban this user?', '{{$banUserFormId}}')"
                                     >
                                         <i class="la la-lock"></i>
                                     </button>
@@ -181,6 +188,7 @@
                                     <button
                                         class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
                                         title="Unban"
+                                        onclick="confirmAction('Unban', 'Are you sure you want to unban this user?', '{{$unbanUserFormId}}')"
                                         form="{{ $unbanUserFormId }}"
                                     >
                                         <i class="la la-unlock-alt"></i>
@@ -202,7 +210,7 @@
                                 <button
                                     class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
                                     title="Delete"
-                                    form="{{ $deleteUserFormId }}"
+                                    onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{$deleteUserFormId}}')"
                                 >
                                     <i class="la la-trash"></i>
                                 </button>
@@ -229,6 +237,7 @@
         </div>
         <!--end::Card body-->
     </div>
+    @endcomponent
 @endsection
 
 @push('quick-sidebar')

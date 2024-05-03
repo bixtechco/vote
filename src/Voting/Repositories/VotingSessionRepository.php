@@ -3,8 +3,10 @@
 namespace Src\Voting\Repositories;
 
 use Throwable;
+use Src\People\User;
 use Src\Voting\VotingSession;
 use Illuminate\Support\Facades\DB;
+use Src\Voting\VotingSessionMember;
 
 class VotingSessionRepository
 {

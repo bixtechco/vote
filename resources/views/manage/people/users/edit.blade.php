@@ -45,7 +45,7 @@
                 @slot('formActionsLeft')
                     <button
                         type="submit"
-                        class="btn btn-brand"
+                        class="btn btn-primary"
                     >
                         Submit
                     </button>
@@ -59,7 +59,7 @@
 
                 @slot('formActionsRight')
                     <a
-                        class="btn btn-link m-link m--font-bold text-muted"
+                        class="btn btn-secondary"
                         href="{{ route('manage.people.users.list') }}"
                     >
                         Cancel
