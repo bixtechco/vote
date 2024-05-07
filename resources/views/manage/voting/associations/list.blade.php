@@ -39,8 +39,10 @@
                     <thead>
                     <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                         <th colspan="2">Name</th>
-                        <th colspan="2">Description</th>
                         <th>Created By</th>
+                        @if (request('user'))
+                            <th>Role</th>
+                        @endif
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -57,8 +59,22 @@
                             <td colspan="2">
                                 {{ $association->name }}
                             </td>
-                            <td colspan="2">{!! $association->description !!}</td>
                             <td>{{ $association->createdBy->email }}</td>
+                            @if (request('user'))
+                                @php
+                                    $roleBadgeMap = [
+                                        0 => 'primary', 1 => 'info',
+                                    ];
+                                    $role = $association->associationMembers()->where('user_id', request('user'))->first();
+                                @endphp
+                                <td>
+                                    @if ($role)
+                                        @component('manage.components.badge', [ 'type' => $roleBadgeMap[$role->is_admin] ])
+                                            {{$role->is_admin == 1 ? 'Admin' : 'Member'}}
+                                        @endcomponent
+                                    @endif
+                                </td>
+                            @endif
                             <td>
                                 @component('manage.components.badge', [ 'type' => $statusBadgeMap[$association->status] ])
                                     {{ Src\Voting\Association::STATUSES[$association->status]['name'] }}

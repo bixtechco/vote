@@ -3,10 +3,11 @@
 namespace App\Http\Requests\Manage\Voting\VotingSessions;
 
 use Carbon\Carbon;
-use Diver\Database\Eloquent\Builder;
-use Diver\Http\Requests\QueryRequest as Request;
+use Src\People\User;
 use Src\Voting\Association;
 use Src\Voting\VotingSession;
+use Diver\Database\Eloquent\Builder;
+use Diver\Http\Requests\QueryRequest as Request;
 
 class QueryRequest extends Request
 {
@@ -25,7 +26,8 @@ class QueryRequest extends Request
     protected $filterable = [
         'search',
         'status',
-        'association'
+        'association',
+        'user'
     ];
 
     /**
@@ -107,5 +109,34 @@ class QueryRequest extends Request
     protected function filterAssociation(Builder $query, $value)
     {
         $query->where('association_id', $value);
+    }
+
+    /**
+     * User param
+     *
+     * @param $value
+     *
+     * @return array
+     */
+    protected function paramUser($value)
+    {
+        $user = User::find($value);
+        return [
+            'title' => 'User',
+            'formattedValue' => optional($user->profile)->full_name ?? $user->email,
+        ];
+    }
+
+    /**
+     * Filter user
+     *
+     * @param \Diver\Database\Eloquent\Builder $query
+     * @param $value
+     */
+    protected function filterUser(Builder $query, $value)
+    {
+        $query->whereHas('votingSessionMembers', function (Builder $query) use ($value) {
+            $query->where('user_id', $value);
+        });
     }
 }

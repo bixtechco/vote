@@ -69,7 +69,7 @@
                                 <img class="m--img-rounded" src="{{ $user->portrait->url }}" width="48" height="48">
                             </td>
                             <td>
-                                <a href="{{ route('manage.people.users.show', [ 'id' => $user->id ]) }}">{{ $user->profile->full_name }}</a>
+                                <a>{{ $user->profile->full_name }}</a>
                                 @if ($user->isAuthed())
                                     @component('manage.components.badge', ['type' => 'info', 'rounded' => true])
                                         You
@@ -87,14 +87,16 @@
                             @if (request('association'))
                                 @php
                                     $roleBadgeMap = [
-                                        0 => 'secondary', 1 => 'info',
+                                        0 => 'primary', 1 => 'info',
                                     ];
-                                    $isAdmin = $user->associations()->where('id', request('association'))->first()->pivot->is_admin;
+                                    $isAdmin = $user->associations()->where('id', request('association'))->first();
                                 @endphp
                                 <td>
-                                    @component('manage.components.badge', [ 'type' => $roleBadgeMap[$isAdmin] ])
-                                        {{$isAdmin == 1 ? 'Admin' : 'Member'}}
-                                    @endcomponent
+                                    @if ($isAdmin)
+                                        @component('manage.components.badge', [ 'type' => $roleBadgeMap[$isAdmin->pivot->is_admin] ])
+                                            {{$isAdmin->pivot->is_admin == 1 ? 'Admin' : 'Member'}}
+                                        @endcomponent
+                                    @endif
                                 </td>
                             @endif
                             <td style="text-align: center; vertical-align: middle;">
@@ -103,12 +105,26 @@
                                 @endcomponent
                             </td>
                             <td>
-                                <a
+                                {{-- <a
                                     class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                                     href="{{ route('manage.people.users.show', ['id' => $user->id]) }}"
                                     title="Details"
                                 >
                                     <i class="la la-eye"></i>
+                                </a> --}}
+                                <a
+                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                                    href="{{ route('manage.voting.associations.list', ['user' => $user->id]) }}"
+                                    title="Associations"
+                                >
+                                    <i class="la la-user"></i>
+                                </a>
+                                <a
+                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                                    href="{{ route('manage.voting.voting-sessions.list', ['user' => $user->id]) }}"
+                                    title="Voting Sessions"
+                                >
+                                    <i class="la la-book"></i>
                                 </a>
                                 @if ($user->isAuthed())
                                     <a
