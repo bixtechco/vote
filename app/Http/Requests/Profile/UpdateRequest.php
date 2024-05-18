@@ -18,7 +18,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'username'     => [
+            'full_name'     => [
                 'require' => 'required',
             ],
             'email'     => [

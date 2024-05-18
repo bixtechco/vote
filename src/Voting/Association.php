@@ -19,6 +19,7 @@ class Association extends Model
 
     ];
 
+
     CONST STATUS_ACTIVE = 0;
     CONST STATUS_INACTIVE = 1;
 
@@ -47,4 +48,20 @@ class Association extends Model
     {
         return $this->hasMany(VotingSession::class, 'association_id');
     }
+
+    public function isActive()
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    /**
+     * Check if association is banned
+     *
+     * @return bool
+     */
+    public function isInactive()
+    {
+        return $this->status === self::STATUS_INACTIVE;
+    }
+
 }

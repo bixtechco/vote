@@ -19,7 +19,7 @@ class AssociationMember extends Model
 
     ];
 
-    
+
 
     public function association()
     {
@@ -30,5 +30,6 @@ class AssociationMember extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 
 }

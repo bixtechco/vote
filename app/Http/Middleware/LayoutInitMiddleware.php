@@ -11,10 +11,7 @@ class LayoutInitMiddleware
 {
     public function handle($request, Closure $next)
     {
-        Log::info('LayoutInitMiddleware is being applied');
-
         (new BootstrapDefault())->init();
-        (new BootstrapMain())->init();
 
 
         return $next($request);

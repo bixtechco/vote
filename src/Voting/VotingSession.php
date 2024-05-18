@@ -78,7 +78,7 @@ class VotingSession extends Model
             foreach ($candidates as $candidate) {
                 $votes = $this->votingSessionMembers()->whereNotNull('votes')->get();
                 $voteCount = $votes->where('votes->'.$role, $candidate->id)->count();
-                
+
                 $roleVoteCounts[$candidate->id] = $voteCount;
             }
             $voteCounts[$role] = $roleVoteCounts;
@@ -100,5 +100,20 @@ class VotingSession extends Model
         });
 
         return $winners;
+    }
+
+    public function isActive()
+    {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
+    public function isInactive()
+    {
+        return $this->status == self::STATUS_INACTIVE;
+    }
+
+    public function isDraft()
+    {
+        return $this->status == self::STATUS_DRAFT;
     }
 }

@@ -31,6 +31,11 @@ class AssociationRepository
         return DB::transaction(function () use ($data) {
             $association = Association::create($data['association']);
 
+            $association->associationMembers()->create([
+                'user_id' => auth()->id(),
+                'is_admin' => true,
+            ]);
+
             return $association;
         });
     }
@@ -76,7 +81,41 @@ class AssociationRepository
     {
         return DB::transaction(function () use ($association) {
             $association->delete();
-            
+
+            return $association;
+        });
+    }
+
+    public function addMember(Association $association, $input)
+    {
+        $data = data_all($input, [
+            'user_id',
+            'is_admin',
+        ]);
+
+        return DB::transaction(function () use ($association, $data) {
+            $association->associationMembers()->create($data);
+
+            return $association;
+        });
+    }
+
+    public function removeMember(Association $association, $member)
+    {
+        return DB::transaction(function () use ($association, $member) {
+            $association->associationMembers()->where('id', $member->id)->delete();
+
+            return $association;
+        });
+    }
+
+    public function setAdmin(Association $association, $member)
+    {
+        return DB::transaction(function () use ($association, $member) {
+            $association->associationMembers()->where('user_id', $member->id)->update([
+                'is_admin' => true,
+            ]);
+
             return $association;
         });
     }

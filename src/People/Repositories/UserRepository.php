@@ -149,7 +149,11 @@ abstract class UserRepository
             }
 
             if (!empty($data['user_profile'])) {
-                $user->profile->update($data['user_profile']);
+                if ($user->profile) {
+                    $user->profile->update($data['user_profile']);
+                } else {
+                    $user->profile()->create($data['user_profile']);
+                }
             }
 
             if (!empty($data['user_portrait'])) {

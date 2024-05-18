@@ -10,6 +10,24 @@ use Src\People\User;
 
 class LoginController extends Controller
 {
+    public function __construct()
+    {
+        $this->redirectTo = route('main.main.home');
+
+        $this->middleware("guest:,{$this->redirectTo}")
+            ->except('logout');
+    }
+
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard('web');
+    }
+
     /**
      * Show login page
      */

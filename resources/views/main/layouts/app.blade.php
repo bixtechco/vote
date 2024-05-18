@@ -64,7 +64,7 @@
     {!! sprintf('<script src="%s"></script>', asset($path)) !!}
 @endforeach
 
-<script type="module" src="{{ asset('main/app.js') }}"></script>
+<script type="module" src="{{ asset('manage/app.js') }}"></script>
 <!--end::Custom Javascript-->
 @stack('scripts')
 

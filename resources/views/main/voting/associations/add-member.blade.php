@@ -1,4 +1,4 @@
-@extends('main.layouts.admin', [ 'pageTitle' => "Edit Association #{$association->id}" ])
+@extends('main.layouts.admin', [ 'pageTitle' => "Add a Member to #Associaite {$association->id}" ])
 
 @section('content')
     <div class="row p-5">
@@ -6,10 +6,9 @@
             @component('main.components.portlet', [
                 'headText' => 'Association',
                 'headIcon' => 'flaticon-user',
-                'formAction' => route('main.voting.associations.update', ['id' => $association->id]),
+                'formAction' => route('main.voting.associations.add-member', ['id' => $association->id]),
                 'formFiles' => true,
-                'formMethod' => 'patch',
-                'backUrl' => route('main.voting.associations.list'),
+                'formMethod' => 'post',
             ])
 
                 <div class="card p-5 row justify-content-center align-content-center">
@@ -17,21 +16,20 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Name *</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Email *</label>
                             <!--end::Label-->
-                            <input type="text" class="form-control form-control-solid" name="name" value="{{ old('name', $association->name) }}">
-                            @include('manage.components.form-control-feedback', [ 'field' => 'name' ])
+                            <input type="text" class="form-control form-control-solid" name="email" value="{{ old('email') }}">
+                            @include('main.components.form-control-feedback', [ 'field' => 'email' ])
                         </div>
                         <!--end::Input group-->
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Description</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Principal ID</label>
                             <!--end::Label-->
-                            <textarea id="editor" class="form-control form-control-solid" name="description">{{ old('description', $association->description) }}</textarea>
-                            @include('main.components.form-control-feedback', [ 'field' => 'description' ])
+                            <input type="text" class="form-control form-control-solid" name="principal_id" value="{{ old('principal_id') }}">
+                            @include('main.components.form-control-feedback', [ 'field' => 'principal_id' ])
                         </div>
-
                         <!--end::Input group-->
                     </div>
                 </div>
@@ -44,9 +42,3 @@
         </div>
     </div>
 @endsection
-@push('scripts')
-    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace('editor');
-    </script>
-@endpush

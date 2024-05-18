@@ -24,6 +24,7 @@ class VotingSessionMemberRepository
             'voting_session_member.voting_session_id',
             'voting_session_member.user_id',
             'voting_session_member.votes',
+            'voting_session_member.block_index',
         ]);
 
         return DB::transaction(function () use ($data) {
@@ -49,6 +50,7 @@ class VotingSessionMemberRepository
             'voting_session_member.voting_session_id',
             'voting_session_member.user_id',
             'voting_session_member.votes',
+            'voting_session_member.block_index'
         ]);
 
         return DB::transaction(function () use ($votingSessionMember, $data) {
@@ -73,7 +75,7 @@ class VotingSessionMemberRepository
     {
         return DB::transaction(function () use ($votingSessionMember) {
             $votingSessionMember->delete();
-            
+
             return $votingSessionMember;
         });
     }
