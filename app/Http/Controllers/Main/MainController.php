@@ -20,7 +20,7 @@ class MainController extends Controller
 
         $user = Auth::user();
 
-        if ($user && $user->email == '' || $user->email == null) {
+        if ($user && ($user->email == '' || $user->email == null)) {
             return redirect()->route('main.account.profile.edit');
         }
 
