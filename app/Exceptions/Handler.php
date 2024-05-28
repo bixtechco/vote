@@ -75,6 +75,9 @@ class Handler extends ExceptionHandler
             case '/manage':
                 $redirect = route('manage.account.login');
                 break;
+                case '/';
+                $redirect = route('main.show-login');
+                break;
         }
 
         flash()->error('Authentication is required')->important();

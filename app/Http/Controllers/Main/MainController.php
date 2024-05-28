@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthedController;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class MainController extends Controller
+class MainController extends AuthedController
 {
     /**
      * Home page

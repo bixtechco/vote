@@ -547,7 +547,11 @@
     <div class="app-navbar-item ms-2 ms-lg-6" id="kt_header_user_menu_toggle">
         <!--begin::Menu wrapper-->
         <div class="cursor-pointer symbol symbol-circle symbol-30px symbol-lg-45px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
+            @if(auth()->user())
             <img src="{{auth()->user()->portrait->url}}" alt="user" />
+            @else
+                <img src="{{asset('assets/media/avatars/avatar.png')}}" alt="user" />
+            @endif
         </div>
         <!--begin::User account menu-->
 {{--        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px" data-kt-menu="true">--}}
