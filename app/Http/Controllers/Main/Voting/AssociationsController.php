@@ -19,7 +19,13 @@ class AssociationsController extends AuthedController
 {
     public function index(QueryRequest $queried)
     {
-        $associations = $queried->query()->paginate(20);
+        $userId = auth()->id();
+
+        $associations = $queried->query()
+            ->whereHas('associationMembers', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->get();
 
         return view('main.voting.associations.list', compact('associations'))->with([
             'filters' => $queried->filters(),
@@ -162,7 +168,7 @@ class AssociationsController extends AuthedController
                 ];
                 AssociationRepository::addMember($association, $input);
 
-                return redirect()->back()->with('success', 'Member added successfully.');
+                return redirect()->route('main.voting.associations.view-members', $association->id);
             } else {
                 return redirect()->back()->with('error', 'Member not found.');
             }

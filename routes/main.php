@@ -24,7 +24,6 @@ Route::group([
     Route::post('/voting/associations/{id}/inactive', 'App\Http\Controllers\Main\Voting\AssociationsController@inactive')->name('main.voting.associations.inactive');
     Route::delete('/voting/associations/{id}/delete', 'App\Http\Controllers\Main\Voting\AssociationsController@destroy')->name('main.voting.associations.destroy');
 
-
     Route::get('/voting/associations/{id}/members', 'App\Http\Controllers\Main\Voting\AssociationsController@viewMembers')->name('main.voting.associations.view-members');
     Route::get('/voting/associations/{id}/members/create', 'App\Http\Controllers\Main\Voting\AssociationsController@showAddMember')->name('main.voting.associations.show-add-member');
     Route::post('/voting/associations/{id}/members', 'App\Http\Controllers\Main\Voting\AssociationsController@addMember')->name('main.voting.associations.add-member');

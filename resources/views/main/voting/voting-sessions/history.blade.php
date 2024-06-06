@@ -11,50 +11,51 @@
 
     @include('main.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' => 'Are you sure you want to perform this action?'])
 
-    <div class="card p-5">
-        @component('main.components.portlet', [
-                    'headText' => 'View Joined Voting Sessions',
-                    'headIcon' => 'flaticon-user',
-                ])
-            <div class="card-body py-4">
-
-                <div class="table-responsive">
-                    <table class="table table-striped gy-7 gs-7">
-                        <thead>
-                        <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                            <th>Voting Session Name</th>
-                            <th>Voted Candidate</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($votingSessionMembers as $member)
-                            <tr>
-                                <td>
-                                    <a href="{{ route('main.voting.voting-sessions.show', ['id' => $member->association->id, 'votingSession' => $member->votingSession->id]) }}">
-                                    {{$member->votingSession->name}}
-                                    </a>
-                                </td>
-                                <td>
-                                    @php
-                                        $votes = json_decode($member->votes, true);
-                                    @endphp
+    <div class="row">
+        @if (count($votingSessionMembers) > 0)
+            @foreach($votingSessionMembers as $member)
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header">
+                            <h4 class="my-0 font-weight-normal text-center align-content-center">{{ $member->votingSession ? $member->votingSession->name : 'Session Deleted'}}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Association: {{ $member->association->name }}</p>
+                            <p>Voted Date: {{ $member->created_at->format('Y-m-d') }}</p>
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary mb-5" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#votes-{{ $member->id }}" aria-expanded="false"
+                                        aria-controls="votes-{{ $member->id }}">
+                                    Show Votes
+                                </button>
+                            </div>
+                            <div class="collapse" id="votes-{{ $member->id }}">
+                                @php
+                                    $votes = json_decode($member->votes, true);
+                                @endphp
+                                @if($votes)
                                     @foreach($votes as $position => $userId)
                                         @php
                                             $votedCandidate = Src\People\User::findOrFail($userId)
                                         @endphp
-                                        <p><strong>{{ $position }}:</strong> {{ $votedCandidate->profile->full_name }}</p>
+                                        <p><strong>{{ $position }}:</strong> {{ $votedCandidate->profile->full_name }}
+                                        </p>
                                     @endforeach
-                                </td>
-                            </tr>
-                        </tbody>
-                        @endforeach
-
-
-                    </table>
-
+                                @else
+                                    <p>No votes recorded for this member.</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <div class="col-md-12">
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">No voting sessions available</h4>
+                    <p>There are no voting sessions available at the moment. Please check back later.</p>
                 </div>
             </div>
-
-        @endcomponent
+        @endif
     </div>
 @endsection

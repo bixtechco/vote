@@ -23,8 +23,7 @@ class VotingSessionsController extends AuthedController
     public function index(QueryRequest $queried, $id)
     {
         $association = Association::findOrFail($id);
-        $votingSessions = VotingSession::where('association_id', $association->id)->paginate(20);
-
+        $votingSessions = VotingSession::where('association_id', $association->id)->get();
 
         return view('main.voting.voting-sessions.list', compact('votingSessions', 'association'))->with([
             'filters' => $queried->filters(),
@@ -139,8 +138,7 @@ class VotingSessionsController extends AuthedController
     {
         $votingSession = VotingSession::findOrFail($votingSessionId);
 
-        $votingSession->status = VotingSession::STATUS_ACTIVE;
-        $votingSession->save();
+        VotingSessionRepository::active($votingSession);
 
         flash()->success("Voting Session <strong>{$votingSession->name}</strong> is activated.");
 
@@ -151,8 +149,7 @@ class VotingSessionsController extends AuthedController
     {
         $votingSession = VotingSession::findOrFail($votingSessionId);
 
-        $votingSession->status = VotingSession::STATUS_INACTIVE;
-        $votingSession->save();
+        VotingSessionRepository::inactive($votingSession);
 
         flash()->success("Voting Session <strong>{$votingSession->name}</strong> is deactivated.");
 

@@ -185,11 +185,12 @@
 
 
 </style>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ mix('js/app.js') }}"></script>
+
 <script>
     let mobileProvider = null;
+    const plugWalletHomepage = "https://plugwallet.ooo";
 
     $(document).ready(function () {
         mobileProvider = new window.PlugMobileProvider({
@@ -242,10 +243,8 @@
             }
         });
 
-        provider = window.ic.plug;
-
         $('#web-login-button').click(async function () {
-            if (provider) {
+            if (window.ic && window.ic.plug) {
                 console.log('provider is defined');
 
                 console.log('requestConnect method is called');
@@ -279,6 +278,7 @@
                 }
             } else {
                 console.log('provider is not defined');
+                window.location.href = plugWalletHomepage;
             }
         });
     });

@@ -24,19 +24,16 @@
                 <div class="card-title">
                     <!--begin::Search-->
                     <div class="d-flex align-items-center position-relative my-1">
-                        {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                        <input type="text" data-kt-user-table-filter="search"
-                               class="form-control form-control-solid w-250px ps-13"
-                               placeholder="Search voting sessions"
-                               id="mySearchInput"/>
+                        Voting Sessions Overview
                     </div>
                     <!--end::Search-->
                 </div>
+                <!--end::Card title-->
                 <!--begin::Card toolbar-->
                 @if($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin)
-                    <div class="card-toolbar align-self-end">
+                    <div class="card-toolbar d-flex justify-content-end">
                         <!--begin::Toolbar-->
-                        <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                        <div class="d-flex" data-kt-user-table-toolbar="base">
                             <!--begin::Add user-->
                             <a href="{{ route('main.voting.voting-sessions.create', ['id' => $association->id]) }}"
                                class="btn btn-primary">
@@ -52,277 +49,185 @@
             <!--end::Card header-->
             @endif
 
+
             <!--begin::Card body-->
             <div class="card-body py-4">
                 <!--begin::Table-->
-                <div class="table-responsive">
-                    <table class="table table-striped gy-7 gs-7">
-                        <thead>
-                        <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Year</th>
-                            <th style="white-space: nowrap">Created By</th>
-                            <th>Status</th>
-                            <th style="text-align: center">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="row">
+                    @php
+                        $statusBadgeMap = [
+                            Src\Voting\VotingSession::STATUS_ACTIVE => 'success',
+                            Src\Voting\VotingSession::STATUS_INACTIVE => 'danger',
+                            Src\Voting\VotingSession::STATUS_DRAFT => 'warning',
+                        ];
+                    @endphp
+                    @php
+                        $voteFormId = 'default_vote_form_id';
+                    @endphp
+                    @foreach($votingSessions as $session)
                         @php
-                            $statusBadgeMap = [
-                                Src\Voting\VotingSession::STATUS_ACTIVE => 'success',
-                                Src\Voting\VotingSession::STATUS_INACTIVE => 'danger',
-                                Src\Voting\VotingSession::STATUS_DRAFT => 'warning',
-                            ];
+                            $banUserFormId = "ban-user-{$session->id}-form";
+                            $unbanUserFormId = "unban-user-{$session->id}-form";
+                            $deleteUserFormId = "delete-user-{$session->id}-form";
+                            $closeFormId = "close-user-{$session->id}-form";
+                            $voteFormId = "vote-{$session->id}-form";
+                            $modalId = "vote-modal-{$session->id}";
                         @endphp
-                        @php
-                            $voteFormId = 'default_vote_form_id';
-                        @endphp
-                        @foreach($votingSessions as $session)
-                            @php
-                                $banUserFormId = "ban-user-{$session->id}-form";
-                                $unbanUserFormId = "unban-user-{$session->id}-form";
-                                $deleteUserFormId = "delete-user-{$session->id}-form";
-                                $closeFormId = "close-user-{$session->id}-form";
-                                $voteFormId = "vote-{$session->id}-form";
-                                $modalId = "vote-modal-{$session->id}";
-                            @endphp
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a href="{{ route('main.voting.voting-sessions.show', ['id' => $association->id, 'votingSession' => $session->id]) }}"
-                                           class="text-gray-800 text-hover-primary fw-bolder me-3 mb-2">
-                                            {{ $session->name }}
-                                        </a>
-                                    </div>
-                                </td>
-                                <td style="text-align: center; vertical-align: middle;">
-                                    {!! $session->description !!}
-                                </td>
-                                <td>
-                                    {{ $session->year }}
-                                </td>
-                                @php
-                                    $creator = \Src\People\User::find($session->created_by);
-                                @endphp
-                                <td style="text-align: center; vertical-align: middle;">
-                                    {{ $creator->profile->full_name }}
-                                </td>
-                                <td style="text-align: center; vertical-align: middle;">
-                                    @component('main.components.badge', [ 'type' => $statusBadgeMap[$session->status] ])
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header">
+                                    <h4 class="card-title">{{ $session->name }}</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>{!! $session->description !!}</p>
+                                    <p>Year: {{ $session->year }}</p>
+                                    <p>Created
+                                        by: {{ \Src\People\User::find($session->created_by)->profile->full_name }}</p>
+                                    <p>Status:
+                                        <span class="badge badge-{{ $statusBadgeMap[$session->status] }}">
                                         {{ Src\Voting\VotingSession::STATUSES[$session->status]['name'] }}
-                                    @endcomponent
-                                </td>
-                                <td style="text-align: center; width: 30%">
-                                    <a
-                                        class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                        href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}"
-                                        title="Edit"
-                                    >
-                                        <i class="la la-edit"></i>
-                                    </a>
-                                    @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->winner_ids == null && $session->isActive())
-                                        <button
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Close Vote"
-                                            onclick="confirmAction('Close vote', 'Are you sure you want to close vote for this voting session?', '{{ $closeFormId }}')"
-                                        >
-                                            <i class="la la-hand-o-up"></i>
+                                    </span>
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Actions
                                         </button>
-                                        <form
-                                            id="{{ $closeFormId }}"
-                                            class="m-form d-none"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.close-vote', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            data-confirm="true"
-                                            data-confirm-type="warning"
-                                            data-confirm-title="Close Form <strong>{{ $session->name }}</strong>"
-                                            data-confirm-text="You are about to close this voting session."
-                                        >
-                                            @method('post')
-                                            @csrf
-                                        </form>
-                                    @endif
-                                    @if ($session->votingSessionMembers->where('user_id', auth()->user()->id)->isEmpty() && $session->isActive())
-                                        <button
-                                            id="{{ $voteFormId }}"
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Vote"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#{{ $modalId }}"
-                                        >
-                                            <i class="la la-check"></i>
-                                        </button>
-                                    @endif
-                                    @if ($session->isDraft())
-                                        <button
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Inactive"
-                                            onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', '{{ $banUserFormId }}')"
-                                        >
-                                            <i class="la la-lock"></i>
-                                        </button>
-                                        <form
-                                            id="{{ $banUserFormId }}"
-                                            class="m-form d-none"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.inactive', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            data-confirm="true"
-                                            data-confirm-type="warning"
-                                            data-confirm-title="Inactive <strong>{{ $session->name }}</strong>"
-                                            data-confirm-text="You are about to inactive this admin."
-                                        >
-                                            @method('post')
-                                            @csrf
-                                        </form>
-                                        <button
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Unban"
-                                            onclick="confirmAction('Active', 'Are you sure you want to active this user?', '{{ $unbanUserFormId }}')"
-                                        >
-                                            <i class="la la-unlock-alt"></i>
-                                        </button>
-                                        <form
-                                            id="{{ $unbanUserFormId }}"
-                                            class="m-form d-none"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.active', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            data-confirm="true"
-                                            data-confirm-type="warning"
-                                            data-confirm-title="Active <strong>{{ $session->name }}</strong>"
-                                            data-confirm-text="You are about to active this associate."
-                                        >
-                                            @method('post')
-                                            @csrf
-                                        </form>
-                                    @endif
-                                    @if ($session->isActive())
-                                        <button
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Inactive"
-                                            onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', '{{ $banUserFormId }}')"
-                                        >
-                                            <i class="la la-lock"></i>
-                                        </button>
-                                        <form
-                                            id="{{ $banUserFormId }}"
-                                            class="m-form d-none"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.inactive', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            data-confirm="true"
-                                            data-confirm-type="warning"
-                                            data-confirm-title="Inactive <strong>{{ $session->name }}</strong>"
-                                            data-confirm-text="You are about to inactive this admin."
-                                        >
-                                            @method('post')
-                                            @csrf
-                                        </form>
-                                    @endif
-                                    @if ($session->isInactive())
-                                        <button
-                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Unban"
-                                            onclick="confirmAction('Active', 'Are you sure you want to active this user?', '{{ $unbanUserFormId }}')"
-                                        >
-                                            <i class="la la-unlock-alt"></i>
-                                        </button>
-                                        <form
-                                            id="{{ $unbanUserFormId }}"
-                                            class="m-form d-none"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.active', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            data-confirm="true"
-                                            data-confirm-type="warning"
-                                            data-confirm-title="Active <strong>{{ $session->name }}</strong>"
-                                            data-confirm-text="You are about to active this associate."
-                                        >
-                                            @method('post')
-                                            @csrf
-                                        </form>
-                                    @endif
-                                    <button
-                                        class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Delete"
-                                        onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{ $deleteUserFormId }}')"
-                                    >
-                                        <i class="la la-trash"></i>
-                                    </button>
-                                    <form
-                                        id="{{ $deleteUserFormId }}"
-                                        class="m-form d-none"
-                                        method="post"
-                                        action="{{ route('main.voting.voting-sessions.destroy', [ 'id' => $association->id , 'votingSession' => $session->id]) }}"
-                                        data-confirm="true"
-                                        data-confirm-type="delete"
-                                        data-confirm-title="Delete <strong>{{ $session->name }}</strong>"
-                                        data-confirm-text="You are about to delete this admin, this procedure is irreversible."
-                                    >
-                                        @method('delete')
-                                        @csrf
-                                    </form>
-                                </td>
-                            </tr>
-                            <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="voteModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content shadow-lg">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title" id="voteModalLabel">Vote</h5>
-                                            <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body bg-light">
-                                            <form
-                                                id="{{ $voteFormId }}"
-                                                class="m-form vote-form"
-                                                method="post"
-                                                action="{{ route('main.voting.voting-sessions.vote', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
-                                            >
-                                                @csrf
-                                                <input type="hidden" id="block_index" name="block_index" value="">
-
-                                                @php
-                                                    $roleCandidates = json_decode($session->role_candidate_ids, true);
-                                                @endphp
-
-                                                @foreach($roleCandidates as $role => $candidates)
-                                                    <div class="mb-3">
-                                                        <label for="{{ $role }}" class="form-label">{{ $role }}</label>
-                                                        <select id="{{ $role }}" name="votes[{{ $role }}]"
-                                                                class="form-select">
-                                                            @foreach($candidates as $candidate)
-                                                                @php
-                                                                    $user = \Src\People\User::find($candidate);
-                                                                @endphp
-                                                                <option
-                                                                    value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                @endforeach
-
-                                                <div class="modal-footer bg-light border-0">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li><a class="dropdown-item"
+                                                   href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}">Edit</a>
+                                            </li>
+                                            @if ($session->isActive())
+                                                <li>
+                                                    <form id="ban-user-{{ $session->id }}-form" method="POST"
+                                                          action="{{ route('main.voting.voting-sessions.inactive', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        @csrf
+                                                        <button type="button" class="dropdown-item"
+                                                                onclick="window.confirmAction('Inactive', 'Are you sure you want to inactive this user?', 'ban-user-{{ $session->id }}-form')">
+                                                            Inactive
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                            @if ($session->isInactive())
+                                                <li>
+                                                    <form id="unban-user-{{ $session->id }}-form" method="POST"
+                                                          action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        @csrf
+                                                        <button type="button" class="dropdown-item"
+                                                                onclick="window.confirmAction('Active', 'Are you sure you want to active this user?', 'unban-user-{{ $session->id }}-form')">
+                                                            Active
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                            @if ($session->isDraft())
+                                                <li>
+                                                    <form id="unban-user-{{ $session->id }}-form" method="POST"
+                                                          action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        @csrf
+                                                        <button type="button" class="dropdown-item"
+                                                                onclick="window.confirmAction('Active', 'Are you sure you want to active this user?', 'unban-user-{{ $session->id }}-form')">
+                                                            Active
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                            <li>
+                                                <form id="delete-user-{{ $session->id }}-form" method="POST"
+                                                      action="{{ route('main.voting.voting-sessions.destroy', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <button type="button" class="dropdown-item"
+                                                            onclick="window.confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $session->id }}-form')">
+                                                        Delete
                                                     </button>
-                                                    <button
-                                                        class="btn btn-warning"
-                                                        title="Vote"
-                                                        type="submit"
-                                                    >
-                                                        <i class="la la-check"></i> Vote
+                                                </form>
+                                            </li>
+                                            @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->winner_ids == null && $session->isActive())
+                                                <li>
+                                                    <form id="close-user-{{ $session->id }}-form" method="POST"
+                                                          action="{{ route('main.voting.voting-sessions.close-vote', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        @csrf
+                                                        <button type="button" class="dropdown-item"
+                                                                onclick="window.confirmAction('Close vote', 'Are you sure you want to close vote for this voting session?', 'close-user-{{ $session->id }}-form')">
+                                                            Close Vote
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                            @if ($session->votingSessionMembers->where('user_id', auth()->user()->id)->isEmpty() && $session->isActive())
+                                                <li>
+                                                    <button class="dropdown-item" data-bs-toggle="modal"
+                                                            data-bs-target="#vote-modal-{{ $session->id }}">Vote
                                                     </button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                                </li>
+                                            @endif
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
+                        <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="voteModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow-lg">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="voteModalLabel">Vote</h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body bg-light">
+                                        <form
+                                            id="{{ $voteFormId }}"
+                                            class="m-form vote-form"
+                                            method="post"
+                                            action="{{ route('main.voting.voting-sessions.vote', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
+                                        >
+                                            @csrf
+                                            <input type="hidden" id="block_index" name="block_index" value="">
 
-                    </table>
+                                            @php
+                                                $roleCandidates = json_decode($session->role_candidate_ids, true);
+                                            @endphp
 
+                                            @foreach($roleCandidates as $role => $candidates)
+                                                <div class="mb-3">
+                                                    <label for="{{ $role }}" class="form-label">{{ $role }}</label>
+                                                    <select id="{{ $role }}" name="votes[{{ $role }}]"
+                                                            class="form-select">
+                                                        @foreach($candidates as $candidate)
+                                                            @php
+                                                                $user = \Src\People\User::find($candidate);
+                                                            @endphp
+                                                            <option
+                                                                value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            @endforeach
+
+                                            <div class="modal-footer bg-light border-0">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close
+                                                </button>
+                                                <button
+                                                    class="btn btn-warning"
+                                                    title="Vote"
+                                                    type="submit"
+                                                >
+                                                    <i class="la la-check"></i> Vote
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
                 <!--end::Table-->
             </div>
@@ -333,7 +238,6 @@
 @push('scripts')
     <script src="{{ mix('js/app.js') }}"></script>
     <script>
-
         $(document).ready(function () {
             const isMobile = PlugMobileProvider.isMobileBrowser();
             if (isMobile) {

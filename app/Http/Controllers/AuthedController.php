@@ -17,6 +17,7 @@ class AuthedController extends Controller
     public function __construct()
     {
         $this->middleware('auth:main');
+        $this->middleware('checkProfile');
     }
 
     /**

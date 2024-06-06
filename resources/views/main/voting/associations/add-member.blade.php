@@ -16,7 +16,7 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Email *</label>
+                            <label class="fs-6 fw-semibold form-label mb-2">Email</label>
                             <!--end::Label-->
                             <input type="text" class="form-control form-control-solid" name="email" value="{{ old('email') }}">
                             @include('main.components.form-control-feedback', [ 'field' => 'email' ])
@@ -25,7 +25,7 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Principal ID</label>
+                            <label class="fs-6 fw-semibold form-label mb-2">Principal ID</label>
                             <!--end::Label-->
                             <input type="text" class="form-control form-control-solid" name="principal_id" value="{{ old('principal_id') }}">
                             @include('main.components.form-control-feedback', [ 'field' => 'principal_id' ])

@@ -87,8 +87,29 @@ class VotingSessionRepository
     {
         return DB::transaction(function () use ($votingSession) {
             $votingSession->delete();
-            
+
             return $votingSession;
         });
     }
+
+    public function active(VotingSession $votingSession)
+    {
+        return DB::transaction(function () use ($votingSession) {
+            $votingSession->status = VotingSession::STATUS_ACTIVE;
+            $votingSession->save();
+
+            return $votingSession;
+        });
+    }
+
+    public function inactive(VotingSession $votingSession)
+    {
+        return DB::transaction(function () use ($votingSession) {
+            $votingSession->status = VotingSession::STATUS_INACTIVE;
+            $votingSession->save();
+
+            return $votingSession;
+        });
+    }
+
 }

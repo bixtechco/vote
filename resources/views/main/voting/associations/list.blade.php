@@ -11,17 +11,14 @@
 
     @include('main.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' => 'Are you sure you want to perform this action?'])
 
-    <div class="card">
+    <div class="card p-0">
         <!--begin::Card header-->
         <div class="card-header border-0 pt-6">
             <!--begin::Card title-->
             <div class="card-title">
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
-                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search"
-                           class="form-control form-control-solid w-250px ps-13" placeholder="Search association"
-                           id="mySearchInput"/>
+                    Associations Overview
                 </div>
                 <!--end::Search-->
             </div>
@@ -43,150 +40,86 @@
         <!--end::Card header-->
 
         <!--begin::Card body-->
-        <div class="card-body py-4">
+        <div class="card-body p-2">
             <!--begin::Table-->
-            <div class="table-responsive">
-                <table class="table table-striped gy-7 gs-7">
-                    <thead>
-                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Created By</th>
-                        <th>Updated By</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @php
-                        $statusBadgeMap = [
-                            Src\Voting\Association::STATUS_ACTIVE => 'success',
-                            Src\Voting\Association::STATUS_INACTIVE => 'danger',
-                        ];
-                    @endphp
-                    @foreach($associations as $association)
-                        @php
-                            $banUserFormId = "ban-user-{$association->id}-form";
-                            $unbanUserFormId = "unban-user-{$association->id}-form";
-                            $deleteUserFormId = "delete-user-{$association->id}-form";
-                        @endphp
-                        <tr>
-                            <td>
-                                <a href="{{ route('main.voting.associations.show', [ 'id' => $association->id ]) }}">{{ $association->name }}</a>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                {!! $association->description !!}
-                            </td>
-                            @php
-                            $creator = \Src\People\User::find($association->created_by);
-                            @endphp
-                            <td style="text-align: center; vertical-align: middle;">
-                                {{ $creator->profile->full_name}}
-                            </td>
-                            @php
-                            $updater = \Src\People\User::find($association->updated_by);
-                            @endphp
-                            <td style="text-align: center; vertical-align: middle;">
-                                {{ $updater->profile->full_name ?? 'N/A' }}
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                @component('main.components.badge', [ 'type' => $statusBadgeMap[$association->status] ])
-                                    {{ Src\Voting\Association::STATUSES[$association->status]['name'] }}
-                                @endcomponent
-                            </td>
-                            <td>
-                                <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('main.voting.associations.edit', ['id' => $association->id]) }}"
-                                    title="Edit"
-                                >
-                                    <i class="la la-edit"></i>
-                                </a>
-                                <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('main.voting.associations.view-members', ['id' => $association->id]) }}"
-                                    title="View All Association Members"
-                                >
-                                    <i class="la la-users"></i>
-                                </a>
-                                <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('main.voting.voting-sessions.list', ['id' => $association->id]) }}"
-                                    title="View All Voting Sessions"
-                                >
-                                    <i class="la la-list"></i>
-                                </a>
-                                @if ($association->isActive())
-                                    <button
-                                        class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Inactive"
-                                        onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', '{{ $banUserFormId }}')"
-                                    >
-                                        <i class="la la-lock"></i>
+            <div class="row">
+                @php
+                    $statusBadgeMap = [
+                        Src\Voting\Association::STATUS_ACTIVE => 'success',
+                        Src\Voting\Association::STATUS_INACTIVE => 'danger',
+                    ];
+                @endphp
+                @foreach($associations as $association)
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ $association->name }}</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>{!! $association->description !!}</p>
+                                <p>Created
+                                    by: {{ \Src\People\User::find($association->created_by)->profile->full_name }}</p>
+                                <p>Updated
+                                    by: {{ \Src\People\User::find($association->updated_by)->profile->full_name ?? 'N/A' }}</p>
+                                <p>Status:
+                                    <span class="badge badge-{{ $statusBadgeMap[$association->status] }}">
+                                        {{ Src\Voting\Association::STATUSES[$association->status]['name'] }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-primary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
                                     </button>
-                                    <form
-                                        id="{{ $banUserFormId }}"
-                                        class="m-form d-none"
-                                        method="post"
-                                        action="{{ route('main.voting.associations.inactive', [ 'id' => $association->id ]) }}"
-                                        data-confirm="true"
-                                        data-confirm-type="warning"
-                                        data-confirm-title="Inactive <strong>{{ $association->name }}</strong>"
-                                        data-confirm-text="You are about to inactive this admin."
-                                    >
-                                        @method('post')
-                                        @csrf
-                                    </form>
-                                @endif
-                                @if ($association->isInactive())
-                                    <button
-                                        class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Unban"
-                                        onclick="confirmAction('Active', 'Are you sure you want to active this user?', '{{ $unbanUserFormId }}')"
-                                    >
-                                        <i class="la la-unlock-alt"></i>
-                                    </button>
-                                    <form
-                                        id="{{ $unbanUserFormId }}"
-                                        class="m-form d-none"
-                                        method="post"
-                                        action="{{ route('main.voting.associations.active', [ 'id' => $association->id ]) }}"
-                                        data-confirm="true"
-                                        data-confirm-type="warning"
-                                        data-confirm-title="Active <strong>{{ $association->name }}</strong>"
-                                        data-confirm-text="You are about to active this associate."
-                                    >
-                                        @method('post')
-                                        @csrf
-                                    </form>
-                                @endif
-                                <button
-                                    class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
-                                    title="Delete"
-                                    onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{ $deleteUserFormId }}')"
-                                >
-                                    <i class="la la-trash"></i>
-                                </button>
-                                <form
-                                    id="{{ $deleteUserFormId }}"
-                                    class="m-form d-none"
-                                    method="post"
-                                    action="{{ route('main.voting.associations.destroy', [ 'id' => $association->id ]) }}"
-                                    data-confirm="true"
-                                    data-confirm-type="delete"
-                                    data-confirm-title="Delete <strong>{{ $association->name }}</strong>"
-                                    data-confirm-text="You are about to delete this admin, this procedure is irreversible."
-                                >
-                                    @method('delete')
-                                    @csrf
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </table>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item"
+                                           href="{{ route('main.voting.associations.edit', ['id' => $association->id]) }}">Edit</a>
+                                        <a class="dropdown-item"
+                                           href="{{ route('main.voting.associations.view-members', ['id' => $association->id]) }}">View
+                                            All Association Members</a>
+                                        <a class="dropdown-item"
+                                           href="{{ route('main.voting.voting-sessions.list', ['id' => $association->id]) }}">View
+                                            All Voting Sessions</a>
+                                        @if ($association->isActive())
+                                            <a class="dropdown-item" href="#"
+                                               onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', 'ban-user-{{ $association->id }}-form')">Inactive</a>
+                                            <form id="ban-user-{{ $association->id }}-form" method="POST"
+                                                  action="{{ route('main.voting.associations.inactive', ['id' => $association->id]) }}"
+                                                  class="d-none">
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        @if ($association->isInactive())
+                                            <a class="dropdown-item" href="#"
+                                               onclick="confirmAction('Active', 'Are you sure you want to active this user?', 'unban-user-{{ $association->id }}-form')">Active</a>
+                                            <form id="unban-user-{{ $association->id }}-form" method="POST"
+                                                  action="{{ route('main.voting.associations.active', ['id' => $association->id]) }}"
+                                                  class="d-none">
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        <a class="dropdown-item" href="#"
+                                           onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $association->id }}-form')">Delete</a>
+                                        <form id="delete-user-{{ $association->id }}-form" method="POST"
+                                              action="{{ route('main.voting.associations.destroy', ['id' => $association->id]) }}"
+                                              class="d-none">
+                                            @csrf
+                                            @method('delete')
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
             <!--end::Table-->
         </div>
         <!--end::Card body-->
     </div>
 @endsection
+
+

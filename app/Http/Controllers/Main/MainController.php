@@ -24,7 +24,26 @@ class MainController extends AuthedController
             return redirect()->route('main.account.profile.edit');
         }
 
-        return view('main.home',compact('ogTitle','ogDescription'));
+        $associations = $user->associations;
+
+        $unvotedSessions = collect();
+
+        foreach ($associations as $association) {
+            $votingSessions = $association->votingSessions;
+
+            $votedSessionIds = $user->votingSessionMembers()->pluck('voting_session_id');
+
+            $unvotedSessionsForAssociation = $votingSessions->whereNotIn('id', $votedSessionIds);
+
+            // Add the association id to each unvoted session
+            foreach ($unvotedSessionsForAssociation as $session) {
+                $session->association_id = $association->id;
+            }
+
+            $unvotedSessions = $unvotedSessions->concat($unvotedSessionsForAssociation);
+        }
+
+        return view('main.home', compact('ogTitle', 'ogDescription', 'unvotedSessions'));
     }
 
 }
