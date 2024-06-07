@@ -14,7 +14,7 @@
                 <!--begin:Menu item-->
                 <div class="menu-item here show menu-accordion">
                     <!--begin:Menu link-->
-                    <span class="menu-link">
+                    <span class="menu-link {{ Request::routeIs('manage.dashboard') ? 'active' : '' }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-home-2 fs-2"></i>
                         </span>
@@ -26,7 +26,7 @@
                 </div>
                 <!--end:Menu item-->
                 <!--begin:Menu item-->
-                <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::routeIs('manage.people.users.*') || Request::routeIs('manage.people.admins.*') ? 'show' : '' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
 											<span class="menu-icon">
@@ -41,7 +41,7 @@
                         <!--begin:Menu item-->
                         <div class="menu-item menu-accordion">
                             <div class="menu-item">
-                                <a class="menu-link" href="{{route('manage.people.users.list')}}">
+                                <a class="menu-link {{ Request::routeIs('manage.people.users.*') ? 'active' : '' }}" href="{{route('manage.people.users.list')}}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -49,7 +49,7 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link" href="{{route('manage.people.admins.list')}}">
+                                <a class="menu-link {{ Request::routeIs('manage.people.admins.*') ? 'active' : '' }}" href="{{route('manage.people.admins.list')}}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -63,7 +63,7 @@
                 <!--end:Menu item-->
                 <div class="menu-item here show menu-accordion">
                     <!--begin:Menu link-->
-                    <span class="menu-link">
+                    <span class="menu-link {{ Request::routeIs('manage.voting.associations.*') ? 'active' : '' }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-people fs-2"></i>
                         </span>
@@ -76,7 +76,7 @@
 
                 <div class="menu-item here show menu-accordion">
                     <!--begin:Menu link-->
-                    <span class="menu-link">
+                    <span class="menu-link {{ Request::routeIs('manage.voting.voting-sessions.*') ? 'active' : '' }}">
                         <span class="menu-icon">
                             <i class="ki-outline ki-notepad fs-2"></i>
                         </span>
