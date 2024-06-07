@@ -1,4 +1,4 @@
-    <!--begin::Notifications-->
+    {{-- <!--begin::Notifications-->
     <div class="app-navbar-item ms-2 ms-lg-6">
         <!--begin::Menu- wrapper-->
         <div class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
@@ -541,7 +541,7 @@
             <span class="position-absolute top-0 start-100 translate-middle badge badge-circle badge-danger w-15px h-15px ms-n4 mt-3">5</span>
         </div>
         <!--end::Menu wrapper-->
-    </div>
+    </div> --}}
     <!--end::Chat-->
     <!--begin::User menu-->
     <div class="app-navbar-item ms-2 ms-lg-6" id="kt_header_user_menu_toggle">
@@ -556,19 +556,20 @@
                 <div class="menu-content d-flex align-items-center px-3">
                     <!--begin::Avatar-->
                     <div class="symbol symbol-50px me-5">
-                        <img alt="Logo" src="assets/media/avatars/300-2.jpg" />
+                        <img alt="Logo" src="{{ auth()->user()->portrait->getUrlAttribute() }}" />
                     </div>
                     <!--end::Avatar-->
                     <!--begin::Username-->
                     <div class="d-flex flex-column">
-                        <div class="fw-bold d-flex align-items-center fs-5">Max Smith
-                            <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Pro</span></div>
-                        <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">max@kt.com</a>
+                        <div class="fw-bold d-flex align-items-center fs-5">{{ auth()->user()->profile->full_name ?? 'Admin' }}
+                            {{-- <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Pro</span> --}}
+                        </div>
+                        <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">{{ auth()->user()->email }}</a>
                     </div>
                     <!--end::Username-->
                 </div>
             </div>
-            <!--end::Menu item-->
+            {{-- <!--end::Menu item-->
             <!--begin::Menu separator-->
             <div class="separator my-2"></div>
             <!--end::Menu separator-->
@@ -750,7 +751,7 @@
             <div class="menu-item px-5">
                 <a href="authentication/layouts/corporate/sign-in.html" class="menu-link px-5">Sign Out</a>
             </div>
-            <!--end::Menu item-->
+            <!--end::Menu item--> --}}
         </div>
         <!--end::User account menu-->
         <!--end::Menu wrapper-->
@@ -759,9 +760,12 @@
     <!--begin::Action-->
     <div class="app-navbar-item ms-2 ms-lg-6 me-lg-6">
         <!--begin::Link-->
-        <a href="authentication/layouts/corporate/sign-in.html" class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px">
-            <i class="ki-outline ki-exit-right fs-1"></i>
-        </a>
+        <form id="logout-form" method="POST" action="{{ route('manage.account.logout') }}" class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px">
+            @csrf
+            <button type="submit" style="background: transparent; border: none;">
+                <i id="logoutBtn" class="ki-outline ki-exit-right fs-1"></i>
+            </button>
+        </form>
         <!--end::Link-->
     </div>
     <!--end::Action-->

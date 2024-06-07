@@ -35,7 +35,7 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Full name *</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Full name</label>
                             <!--end::Label-->
                             <input type="text" class="form-control form-control-solid" name="full_name" value="{{ old('full_name', $user->profile->full_name) }}">
                             @include('manage.components.form-control-feedback', [ 'field' => 'full_name' ])
@@ -44,7 +44,7 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Email *</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Email</label>
                             <!--end::Label-->
                             <input type="text" class="form-control form-control-solid" name="email" value="{{ old('email', $user->email) }}">
                             @include('manage.components.form-control-feedback', [ 'field' => 'email' ])
@@ -53,21 +53,23 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Role *</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Role</label>
                             <!--end::Label-->
-                            <div class="m-radio-inline">
+                            <div class="row px-3">
                                 @foreach($roles as $role)
-                                    <label class="m-radio m-radio--solid m-radio--brand">
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            class="form_admin_role"
-                                            value="{{ $role->name }}"
-                                            {{ old('role', $user->role->name) === $role->name ? 'checked' : '' }}
-                                        >
-                                        {{ $role->name }}
-                                        <span></span>
-                                    </label>
+                                    <div class="form-check form-check-custom form-check-primary form-check-solid form-check-sm col-sm-6">
+                                        <input class="form-check-input" 
+                                        type="radio"
+                                        name="role"
+                                        class="form_admin_role"
+                                        value="{{ $role->name }}"
+                                        id="{{$role->name}}"
+                                        {{ old('role', $user->role->name) === $role->name ? 'checked' : '' }}>
+                        
+                                        <!--begin::Label-->
+                                        <label class="form-check-label text-gray-700 fw-bold text-nowrap" for="{{$role->name}}">{{ $role->name }}</label>
+                                        <!--end::Label-->
+                                    </div>
                                 @endforeach
                             </div>
                             @include('manage.components.form-control-feedback', [ 'field' => 'role' ])
@@ -76,19 +78,19 @@
                         <!--begin::Input group-->
                         <div class="d-flex flex-column mb-7 fv-row">
                             <!--begin::Label-->
-                            <label class="required fs-6 fw-semibold form-label mb-2">Admin Abilities *</label>
+                            <label class="required fs-6 fw-semibold form-label mb-2">Admin Abilities</label>
                             <!--end::Label-->
-                            <div class="row">
+                            <div class="row px-3">
                                 @foreach($abilities as $ability)
-                                    <div class="col-sm-4 m-form__group-sub">
-                                        <input
-                                            type="checkbox"
-                                            name="abilities[]"
-                                            value="{{ $ability }}"
-                                            id="{{ $ability }}"
-                                            {{ old('abilities') !== null && in_array($ability, old('abilities')) ? 'checked' : '' }}
-                                        >
-                                        <label class="form-control-label capitalize" for="{{ $ability }}">{{ $ability }}</label>
+                                    <div class="form-check form-check-custom form-check-primary form-check-solid form-check-sm mb-3 col-sm-6">
+                                        <input class="form-check-input"
+                                        type="checkbox"
+                                        name="abilities[]"
+                                        value="{{ $ability }}"
+                                        id="{{ $ability }}"
+                                        {{ old('abilities') !== null && in_array($ability, old('abilities')) ? 'checked' : '' }}
+                                        >                    
+                                        <label class="form-check-label text-gray-700 fw-bold text-nowrap text-capitalize" for="{{ $ability }}">{{ $ability }}</label>
                                     </div>
                                 @endforeach
                             </div>

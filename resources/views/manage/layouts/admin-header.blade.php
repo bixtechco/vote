@@ -1,9 +1,9 @@
 <div id="kt_app_header" class="app-header d-flex flex-column flex-stack">
 <!--begin::Header main-->
     <div class="d-flex flex-stack flex-grow-1">
-        @include(config('settings.KT_THEME_LAYOUT_DIR').'/admin-header-brand')
+        @include(config('settings.KT_THEME_LAYOUT_MANAGE').'/admin-header-brand')
         <!--begin::Navbar-->
-        @include(config('settings.KT_THEME_LAYOUT_DIR').'/admin-header-menu')
+        @include(config('settings.KT_THEME_LAYOUT_MANAGE').'/admin-header-menu')
     </div>
     <!--begin::Separator-->
 {{--    <div class="app-header-separator"></div>--}}
