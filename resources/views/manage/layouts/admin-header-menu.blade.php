@@ -1,21 +1,7 @@
-@php
-    
-@endphp
-
 <div class="app-navbar flex-grow-1 justify-content-end" id="kt_app_header_navbar">
     <div class="app-navbar-item d-flex align-items-stretch flex-lg-grow-1">
-        <header class="m-subheader">
-            <div class="d-flex align-items-center">
-                <h3 class="m-subheader__title mr-auto">
-                    {{ $pageTitle }}
-                    @if ($pageSubtitle)
-                        <small class="d-block text-muted">{{ $pageSubtitle }}</small>
-                    @endif
-                </h3>
-            </div>
-        </header>
         <!--begin::Search-->
-        <div id="kt_header_search" class="header-search d-flex align-items-center w-lg-350px" data-kt-search-keypress="true" data-kt-search-min-length="2" data-kt-search-enter="enter" data-kt-search-layout="menu" data-kt-search-responsive="true" data-kt-menu-trigger="auto" data-kt-menu-permanent="true" data-kt-menu-placement="bottom-start">
+        {{-- <div id="kt_header_search" class="header-search d-flex align-items-center w-lg-350px" data-kt-search-keypress="true" data-kt-search-min-length="2" data-kt-search-enter="enter" data-kt-search-layout="menu" data-kt-search-responsive="true" data-kt-menu-trigger="auto" data-kt-menu-permanent="true" data-kt-menu-placement="bottom-start">
             <!--begin::Tablet and mobile search toggle-->
             <div data-kt-search-element="toggle" class="search-toggle-mobile d-flex d-lg-none align-items-center">
                 <div class="d-flex">
@@ -624,10 +610,10 @@
                 <!--end::Preferences-->
             </div>
             <!--end::Menu-->
-        </div>
+        </div> --}}
         <!--end::Search-->
     </div>
-    @include(config('settings.KT_THEME_LAYOUT_DIR').'/admin-header-topbar')
+    @include(config('settings.KT_THEME_LAYOUT_MANAGE').'/admin-header-topbar')
     <!--end::Header menu toggle-->
 </div>
 <!--end::Navbar-->

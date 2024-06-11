@@ -10,9 +10,9 @@
     </div>
     <!--end::Sidebar mobile toggle-->
     <!--begin::Logo-->
-    <a href="{{ route('manage.dashboard') }}" class="app-sidebar-logo">
+    {{-- <a href="{{ route('manage.dashboard') }}" class="app-sidebar-logo">
         <img alt="Logo" src="{{ asset('assets/media/logos/default.svg') }}" class="h-25px theme-light-show"/>
         <img alt="Logo" src="{{ asset('assets/media/logos/default-dark.svg') }}" class="h-25px theme-dark-show"/>
-    </a>
+    </a> --}}
     <!--end::Logo-->
 </div>

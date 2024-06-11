@@ -19,7 +19,7 @@
 <section class="m-portlet {{ $unair ? 'm-portlet--unair' : '' }} {{ $responsiveMobile ? 'm-portlet--responsive-mobile' : '' }} {{ $responsiveMobileAndTablet ? 'm-portlet--responsive-tablet-and-mobile' : '' }}">
     @if ($headText)
         <header class="m-portlet__head">
-            <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-caption mb-5">
                 <div class="m-portlet__head-title">
                     @if ($headIcon)
                         <span class="m-portlet__head-icon">

@@ -13,6 +13,7 @@ return [
 
     'KT_THEME_LAYOUT_DIR' => 'metronic.layouts',
     'KT_THEME_LAYOUT_MAIN' => 'main.layouts',
+    'KT_THEME_LAYOUT_MANAGE' => 'manage.layouts',
 
 
     # Theme Mode
