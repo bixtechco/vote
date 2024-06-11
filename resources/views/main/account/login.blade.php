@@ -240,6 +240,7 @@
                 }
             } else {
                 console.log('mobileProvider is not defined');
+                window.open(plugWalletHomepage, '_blank');
             }
         });
 
@@ -278,7 +279,7 @@
                 }
             } else {
                 console.log('provider is not defined');
-                window.location.href = plugWalletHomepage;
+                window.open(plugWalletHomepage, '_blank');
             }
         });
     });

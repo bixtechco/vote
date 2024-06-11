@@ -9,6 +9,7 @@
                 'formAction' => route('main.voting.associations.add-member', ['id' => $association->id]),
                 'formFiles' => true,
                 'formMethod' => 'post',
+                'backUrl' => route('main.voting.associations.view-members', ['id' => $association->id]),
             ])
 
                 <div class="card p-5 row justify-content-center align-content-center">

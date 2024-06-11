@@ -59,6 +59,8 @@
                         </div>
                         <!--end::Input group-->
 
+                        <hr>
+
                         <div class="repeater">
                             <div data-repeater-list="role_candidate_ids">
                                 @foreach(json_decode($votingSession->role_candidate_ids, true) as $positionName => $candidateIds)

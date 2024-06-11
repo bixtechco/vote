@@ -31,7 +31,7 @@
                         <span class="menu-icon">
                             <i class="ki-outline ki-gift fs-2"></i>
                         </span>
-                        <span class="menu-title">Associations Management</span>
+                        <span class="menu-title">Associations</span>
                     </a>
                     <!--end:Menu link-->
                 </div>
@@ -45,6 +45,19 @@
                             <i class="ki-outline ki-save-2 fs-2"></i>
                         </span>
                         <span class="menu-title">History</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+                <!--end:Menu item-->
+                <!--begin:Menu item-->
+                <div class="menu-item">
+                    <!--begin:Menu link-->
+                    <a class="menu-link {{ Request::routeIs('main.account.profile.edit') ? 'active' : '' }}"
+                       href="{{route('main.account.profile.edit')}}">
+                        <span class="menu-icon">
+                            <i class="ki-outline ki-save-2 fs-2"></i>
+                        </span>
+                        <span class="menu-title">Profile</span>
                     </a>
                     <!--end:Menu link-->
                 </div>

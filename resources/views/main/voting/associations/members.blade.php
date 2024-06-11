@@ -44,7 +44,7 @@
                 <!--end::Card toolbar-->
             </div>
             <!--end::Card header-->
-            <div class="card-body py-4">
+            <div class="card-body p-0">
 
                 <div class="table-responsive">
                     <table class="table table-striped gy-7 gs-7">

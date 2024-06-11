@@ -39,6 +39,21 @@
                         </div>
                         <!--end::Input group-->
 
+                        <div class="d-flex flex-column mb-7 fv-row">
+                            <label class="required fs-6 fw-semibold form-label mb-2">Start Date</label>
+                            <input type="date" class="form-control form-control-solid" name="start_date"
+                                   value="{{ old('start_date') }}">
+                            @include('main.components.form-control-feedback', [ 'field' => 'start_date' ])
+                        </div>
+
+                        <div class="d-flex flex-column mb-7 fv-row">
+                            <label class="required fs-6 fw-semibold form-label mb-2">End Date</label>
+                            <input type="date" class="form-control form-control-solid" name="end_date"
+                                   value="{{ old('end_date') }}">
+                            @include('main.components.form-control-feedback', [ 'field' => 'end_date' ])
+                        </div>
+                        <hr>
+
                         <div class="repeater">
                             <div data-repeater-list="role_candidate_ids">
                                 <div data-repeater-item>
@@ -73,20 +88,6 @@
                             <div class="d-flex justify-content-end mt-3">
                                 <button data-repeater-create type="button" class="btn btn-primary">Add</button>
                             </div>
-                        </div>
-
-                        <div class="d-flex flex-column mb-7 fv-row">
-                            <label class="required fs-6 fw-semibold form-label mb-2">Start Date</label>
-                            <input type="date" class="form-control form-control-solid" name="start_date"
-                                   value="{{ old('start_date') }}">
-                            @include('main.components.form-control-feedback', [ 'field' => 'start_date' ])
-                        </div>
-
-                        <div class="d-flex flex-column mb-7 fv-row">
-                            <label class="required fs-6 fw-semibold form-label mb-2">End Date</label>
-                            <input type="date" class="form-control form-control-solid" name="end_date"
-                                   value="{{ old('end_date') }}">
-                            @include('main.components.form-control-feedback', [ 'field' => 'end_date' ])
                         </div>
 
                     </div>
