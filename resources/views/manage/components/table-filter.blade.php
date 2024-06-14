@@ -34,12 +34,16 @@ $hasFilters = $filters->isNotEmpty();
             @endif
         </div>
         <div class="text-right">
-            <button
+            {{-- <button
                 id="{{ $target }}-toggler"
                 class="btn btn-outline"
                 type="button"
             >
                 <i class="la la-filter"></i> Filter
+            </button> --}}
+
+            <button id="{{ $target }}-toggler" type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                <i class="ki-outline ki-filter fs-2"></i>        Filter
             </button>
 
             @if($hasFilters)
