@@ -31,12 +31,14 @@
                 <div class="card-toolbar align-self-end">
                     <!--begin::Toolbar-->
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                        @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
                         <!--begin::Add user-->
                         <a href="{{ route('main.voting.associations.show-add-member', ['id' => $association->id]) }}"
                            class="btn btn-primary">
                             {!! getIcon('plus', 'fs-2', '', 'i') !!}
                             New Member
                         </a>
+                        @endif
                         <!--end::Add user-->
                     </div>
                     <!--end::Toolbar-->
@@ -53,7 +55,9 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Status</th>
+                            @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
                             <th>Actions</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>

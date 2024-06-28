@@ -30,6 +30,7 @@ class VotingSessionRepository
             'voting_session.start_date',
             'voting_session.end_date',
             'voting_session.winner_ids',
+            'voting_session.winner_qty',
             'voting_session.created_by',
             'voting_session.status',
         ]);
@@ -61,6 +62,7 @@ class VotingSessionRepository
             'voting_session.start_date',
             'voting_session.end_date',
             'voting_session.winner_ids',
+            'voting_session.winner_qty',
             'voting_session.created_by',
             'voting_session.status',
         ]);

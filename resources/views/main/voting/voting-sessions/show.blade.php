@@ -94,7 +94,7 @@
                         </div>
                         <div class="card-body pt-0 pb-5">
                             <div class="table-responsive">
-                                <table class="table align-middle table-row-dashed gy-5"
+                                <table class="table align-middle table-row-dashed gy-5 custom-table"
                                        id="kt_table_users_login_session">
                                     <thead class="border-bottom border-gray-200 fs-7 fw-bold">
                                     <tr class="text-start text-muted text-uppercase gs-0">
@@ -106,11 +106,20 @@
                                     </thead>
                                     <tbody class="fs-6 fw-semibold text-gray-600">
                                     @foreach($candidates as $position => $candidatesInPosition)
-                                        @foreach($candidatesInPosition as $candidate)
+                                        @foreach($candidatesInPosition as $index => $candidate)
                                             <tr>
-                                                <td>{{ $position }}</td>
+                                                @if($index === 0)
+                                                    <td rowspan="{{ count($candidatesInPosition) }}">{{ $position }}</td>
+                                                @endif
                                                 <td>{{ $candidate['user']->profile->full_name }}</td>
-                                                <td>{{ $candidate['votes'] }}</td>
+                                                @if ($association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin ?? false)
+                                                    <td>{{ $candidate['votes'] }}</td>
+                                                @endif
+                                                <td>
+                                                    @if($candidate['isWinner'])
+                                                        <span class="badge badge-light-success">Winner</span>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @endforeach
@@ -189,3 +198,8 @@
     @endcomponent
 @endsection
 
+<style>
+    .custom-table td:first-child {
+        padding-left: 0.8rem !important;
+    }
+</style>

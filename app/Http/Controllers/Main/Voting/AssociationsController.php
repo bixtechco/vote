@@ -7,13 +7,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\Voting\Association\StoreRequest;
 use App\Http\Requests\Main\Voting\Association\UpdateRequest;
 use App\Http\Requests\Main\Voting\Association\QueryRequest;
+use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Mail;
 use Src\Auth\Role;
 use Src\People\User;
 use Src\Voting\Association;
 use Src\Voting\Facades\AssociationRepository;
+use Src\Voting\Facades\InvitationRepository;
+use Src\Voting\Invitation;
 
 class AssociationsController extends AuthedController
 {
@@ -170,12 +175,29 @@ class AssociationsController extends AuthedController
 
                 return redirect()->route('main.voting.associations.view-members', $association->id);
             } else {
-                return redirect()->back()->with('error', 'Member not found.');
+                $this->sendInvitationEmail($email, $association);
+
+                return redirect()->back()->with('success', 'Invitation sent to the email provided.');
             }
         } else {
             return redirect()->back()->with('error', 'You are not allowed to add members.');
         }
     }
+
+    protected function sendInvitationEmail($email, $association)
+    {
+        $token = Str::random(60);
+
+        $input['invitation']['email'] = $email;
+        $input['invitation']['association_id'] = $association->id;
+        $input['invitation']['token'] = $token;
+
+        InvitationRepository::create($input);
+
+        Mail::to($email)->send(new InvitationMail($association, $token));
+
+    }
+
 
     public function setAdmin($id, $memberId)
     {

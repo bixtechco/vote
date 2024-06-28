@@ -50,70 +50,59 @@
                     ];
                 @endphp
                 @foreach($associations as $association)
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-sm">
-                            <div class="card-header">
-                                <h4 class="card-title">{{ $association->name }}</h4>
-                            </div>
-                            <div class="card-body">
-                                <p>{!! $association->description !!}</p>
-                                <p>Created
-                                    by: {{ \Src\People\User::find($association->created_by)->profile->full_name }}</p>
-                                <p>Updated
-                                    by: {{ \Src\People\User::find($association->updated_by)->profile->full_name ?? 'N/A' }}</p>
-                                <p>Status:
-                                    <span class="badge badge-{{ $statusBadgeMap[$association->status] }}">
-                                        {{ Src\Voting\Association::STATUSES[$association->status]['name'] }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-primary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Actions
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item"
-                                           href="{{ route('main.voting.associations.edit', ['id' => $association->id]) }}">Edit</a>
-                                        <a class="dropdown-item"
-                                           href="{{ route('main.voting.associations.view-members', ['id' => $association->id]) }}">View
-                                            All Association Members</a>
-                                        <a class="dropdown-item"
-                                           href="{{ route('main.voting.voting-sessions.list', ['id' => $association->id]) }}">View
-                                            All Voting Sessions</a>
-                                        @if ($association->isActive())
-                                            <a class="dropdown-item" href="#"
-                                               onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', 'ban-user-{{ $association->id }}-form')">Inactive</a>
-                                            <form id="ban-user-{{ $association->id }}-form" method="POST"
-                                                  action="{{ route('main.voting.associations.inactive', ['id' => $association->id]) }}"
-                                                  class="d-none">
-                                                @csrf
-                                            </form>
-                                        @endif
-                                        @if ($association->isInactive())
-                                            <a class="dropdown-item" href="#"
-                                               onclick="confirmAction('Active', 'Are you sure you want to active this user?', 'unban-user-{{ $association->id }}-form')">Active</a>
-                                            <form id="unban-user-{{ $association->id }}-form" method="POST"
-                                                  action="{{ route('main.voting.associations.active', ['id' => $association->id]) }}"
-                                                  class="d-none">
-                                                @csrf
-                                            </form>
-                                        @endif
-                                        <a class="dropdown-item" href="#"
-                                           onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $association->id }}-form')">Delete</a>
-                                        <form id="delete-user-{{ $association->id }}-form" method="POST"
-                                              action="{{ route('main.voting.associations.destroy', ['id' => $association->id]) }}"
-                                              class="d-none">
-                                            @csrf
-                                            @method('delete')
-                                        </form>
-                                    </div>
+                    @if($association)
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header">
+                                    <h4 class="card-title">{{ $association->name }}</h4>
                                 </div>
+                                <div class="card-body">
+                                    <p>{!! $association->description !!}</p>
+                                    <p>Created by: {{ \Src\People\User::find($association->created_by)->profile->full_name }}</p>
+                                    <p>Updated by: {{ \Src\People\User::find($association->updated_by)->profile->full_name ?? 'N/A' }}</p>
+                                    <p>Status:
+                                        <span class="badge badge-{{ $statusBadgeMap[$association->status] }}">
+                                            {{ Src\Voting\Association::STATUSES[$association->status]['name'] }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Actions
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
+                                            <a class="dropdown-item" href="{{ route('main.voting.associations.edit', ['id' => $association->id]) }}">Edit</a>
+                                            @endif
+                                            <a class="dropdown-item" href="{{ route('main.voting.associations.view-members', ['id' => $association->id]) }}">View All Association Members</a>
+                                            <a class="dropdown-item" href="{{ route('main.voting.voting-sessions.list', ['id' => $association->id]) }}">View All Voting Sessions</a>
+                                            @if (auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin && $association->isActive())
+                                                <a class="dropdown-item" href="#" onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', 'ban-user-{{ $association->id }}-form')">Inactive</a>
+                                                <form id="ban-user-{{ $association->id }}-form" method="POST" action="{{ route('main.voting.associations.inactive', ['id' => $association->id]) }}" class="d-none">
+                                                    @csrf
+                                                </form>
+                                            @endif
+                                            @if (auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin && $association->isInactive())
+                                                <a class="dropdown-item" href="#" onclick="confirmAction('Active', 'Are you sure you want to active this user?', 'unban-user-{{ $association->id }}-form')">Active</a>
+                                                <form id="unban-user-{{ $association->id }}-form" method="POST" action="{{ route('main.voting.associations.active', ['id' => $association->id]) }}" class="d-none">
+                                                    @csrf
+                                                </form>
+                                            @endif
+                                            @if (auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
+                                                <a class="dropdown-item" href="#" onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $association->id }}-form')">Delete</a>
+                                                <form id="delete-user-{{ $association->id }}-form" method="POST" action="{{ route('main.voting.associations.destroy', ['id' => $association->id]) }}" class="d-none">
+                                                    @csrf
+                                                    @method('delete')
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
             <!--end::Table-->
@@ -121,5 +110,3 @@
         <!--end::Card body-->
     </div>
 @endsection
-
-

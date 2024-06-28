@@ -1,4 +1,4 @@
-@extends('main.layouts.admin', [ 'pageTitle' => "Home" ])
+@extends('main.layouts.admin', ['pageTitle' => "Home"])
 
 @section('content')
     <div class="row">
@@ -13,7 +13,7 @@
                             <ul class="list-unstyled mt-3 mb-4">
                                 <li>{!! $session->description !!}</li>
                             </ul>
-                            <a href="{{ route('main.voting.voting-sessions.show', ['id' => $session->association_id, 'votingSession' => $session->id]) }}" class="btn btn-lg btn-block btn-primary">Show Voting Session</a>
+                            <a href="{{ route('main.voting.voting-sessions.list', ['id' => $session->association_id]) }}?voting_session_id={{ $session->id }}" class="btn btn-lg btn-block btn-primary">Show Voting Session</a>
                         </div>
                     </div>
                 </div>

@@ -78,6 +78,14 @@
                                             </select>
                                             @include('main.components.form-control-feedback', [ 'field' => 'candidate_ids' ])
                                         </div>
+                                        <div class="d-flex flex-column mb-7 fv-row">
+                                            <label class="required fs-6 fw-semibold form-label mb-2">Number of Winners
+                                                *</label>
+                                            <input type="number" class="form-control form-control-solid winner_qty"
+                                                   name="role_candidate_ids[][winner_qty]"
+                                                   value="{{ old('winner_qty', 1) }}" min="1">
+                                            @include('main.components.form-control-feedback', [ 'field' => 'winner_qty' ])
+                                        </div>
                                         <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                             <button data-repeater-delete type="button" class="btn btn-danger">Delete
                                             </button>
@@ -126,7 +134,7 @@
                     initEmpty: false,
                     defaultValues: {
                         'position_name': '',
-                        'candidate_ids': []
+                        'candidate_ids': [],
                     },
                     show: function () {
                         $(this).slideDown();

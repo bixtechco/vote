@@ -12,7 +12,8 @@
                     {{--                    <!--begin::Wrapper-->--}}
                     <div class="w-lg-500px p-10">
                         <!--begin::Page-->
-                            <button id="login-button" class="login-button custom-btn" style="display: none">
+                        <input type="hidden" id="token" value="{{ $token }}">
+                        <button id="login-button" class="login-button custom-btn" style="display: none">
                                 <span>Login with Plug Wallet</span>
                             </button>
                             <button id="web-login-button" class="web-login-button custom-btn"><span>Login with Plug Wallet</span></button>
@@ -218,12 +219,14 @@
                         const principal = await agent.getPrincipal();
                         const principalId = principal.toText();
                         console.log(`The connected user's principal ID is:`, principalId);
+                        const token = $('#token').val();
 
                         $.ajax({
                             url: '/login',
                             method: 'POST',
                             data: {
                                 principalId: JSON.stringify(principalId),
+                                token: token,
                                 _token: '{{ csrf_token() }}'
                             },
                             success: function (response) {
@@ -259,11 +262,15 @@
                     const principal = await window.ic.plug.agent.getPrincipal();
                     const principalId = principal.toText();
                     console.log(`The connected user's principal ID is:`, principalId);
+                    const token = $('#token').val();
+
                     $.ajax({
                         url: '/login',
                         method: 'POST',
                         data: {
                             principalId: JSON.stringify(principalId),
+                            token: token,
+
                             _token: '{{ csrf_token() }}'
                         },
                         success: function (response) {

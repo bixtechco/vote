@@ -24,6 +24,7 @@ class QueryRequest extends Request
     protected $filterable = [
         'search',
         'status',
+        'voting_session_id',
     ];
 
     /**
@@ -81,5 +82,31 @@ class QueryRequest extends Request
     protected function filterStatus(Builder $query, $value)
     {
         $query->whereIn('status', $value);
+    }
+
+    /**
+     * Voting Session ID param
+     *
+     * @param $value
+     *
+     * @return array
+     */
+    protected function paramVotingSessionId($value)
+    {
+        return [
+            'title' => 'Voting Session ID',
+            'formattedValue' => $value,
+        ];
+    }
+
+    /**
+     * Filter voting session by ID
+     *
+     * @param \Diver\Database\Eloquent\Builder $query
+     * @param $value
+     */
+    protected function filterVotingSessionId(Builder $query, $value)
+    {
+        $query->where('id', $value);
     }
 }

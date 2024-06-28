@@ -23,12 +23,20 @@ class VotingSessionsController extends AuthedController
     public function index(QueryRequest $queried, $id)
     {
         $association = Association::findOrFail($id);
-        $votingSessions = VotingSession::where('association_id', $association->id)->get();
+        $query = VotingSession::where('association_id', $association->id);
+
+        if (request()->has('voting_session_id')) {
+            $votingSessionId = request()->input('voting_session_id');
+            $query->where('id', $votingSessionId);
+        }
+
+        $votingSessions = $query->get();
 
         return view('main.voting.voting-sessions.list', compact('votingSessions', 'association'))->with([
             'filters' => $queried->filters(),
         ]);
     }
+
 
     public function create($id)
     {
@@ -43,8 +51,11 @@ class VotingSessionsController extends AuthedController
         $roleCandidateIds = $request->input('role_candidate_ids');
 
         $formattedRoleCandidateIds = [];
+        $winnerQty = [];
+
         foreach ($roleCandidateIds as $roleCandidateId) {
             $formattedRoleCandidateIds[$roleCandidateId['position_name']] = $roleCandidateId['candidate_ids'];
+            $winnerQty[$roleCandidateId['position_name']] = $roleCandidateId['winner_qty'];
         }
 
         $input['voting_session']['association_id'] = $id;
@@ -52,6 +63,7 @@ class VotingSessionsController extends AuthedController
         $input['voting_session']['description'] = $request->input('description');
         $input['voting_session']['year'] = $request->input('year');
         $input['voting_session']['role_candidate_ids'] = json_encode($formattedRoleCandidateIds);
+        $input['voting_session']['winner_qty'] = json_encode($winnerQty);
         $input['voting_session']['status'] = VotingSession::STATUS_DRAFT;
         $input['voting_session']['start_date'] = $request->input('start_date');
         $input['voting_session']['end_date'] = $request->input('end_date');
@@ -86,13 +98,21 @@ class VotingSessionsController extends AuthedController
         }
 
         $candidates = [];
+        $winnerIds = json_decode($votingSession->winner_ids, true)['winners'] ?? [];
+
         foreach ($voteCounts as $position => $candidatesInPosition) {
+            $candidates[$position] = [];
             foreach ($candidatesInPosition as $candidateId => $voteCount) {
-                $candidates[$position][$candidateId] = [
+                $isWinner = in_array($candidateId, $winnerIds[$position] ?? []);
+                $candidates[$position][] = [
                     'user' => User::findOrFail($candidateId),
-                    'votes' => $voteCount
+                    'votes' => $voteCount,
+                    'isWinner' => $isWinner
                 ];
             }
+            usort($candidates[$position], function($a, $b) {
+                return $b['votes'] - $a['votes'];
+            });
         }
 
         return view('main.voting.voting-sessions.show', compact('association', 'votingSession', 'votingSessionMembers', 'usersNotVoted', 'candidates'));
@@ -115,14 +135,18 @@ class VotingSessionsController extends AuthedController
         $roleCandidateIds = $request->input('role_candidate_ids');
 
         $formattedRoleCandidateIds = [];
+        $winnerQty = [];
+
         foreach ($roleCandidateIds as $roleCandidateId) {
             $formattedRoleCandidateIds[$roleCandidateId['position_name']] = $roleCandidateId['candidate_ids'];
+            $winnerQty[$roleCandidateId['position_name']] = $roleCandidateId['winner_qty'];
         }
 
         $input['voting_sessions']['name'] = $request->input('name');
         $input['voting_sessions']['description'] = $request->input('description');
         $input['voting_sessions']['year'] = $request->input('year');
         $input['voting_session']['role_candidate_ids'] = json_encode($formattedRoleCandidateIds);
+        $input['voting_sessions']['winner_qty'] = json_encode($winnerQty);
         $input['voting_sessions']['start_date'] = $request->input('start_date');
         $input['voting_sessions']['end_date'] = $request->input('end_date');
         $input['voting_sessions']['status'] = $request->input('status');
@@ -213,27 +237,28 @@ class VotingSessionsController extends AuthedController
             }
         }
 
+        $winnerQty = json_decode($votingSession->winner_qty, true);
         $winners = [];
         foreach ($voteCounts as $position => $candidates) {
-            $winners[$position] = array_search(max($candidates), $candidates);
+            arsort($candidates);
+            $maxWinners = isset($winnerQty[$position]) ? $winnerQty[$position] : 1;
+            $winners[$position] = array_slice(array_keys($candidates), 0, $maxWinners);
         }
 
-        $input['voting_session']['winner_ids'] = json_encode($winners);
-
+        $existingWinnerIds = json_decode($votingSession->winner_ids, true);
+        $existingWinnerIds['winners'] = $winners;
+        $input['voting_session']['winner_ids'] = json_encode($existingWinnerIds);
         VotingSessionRepository::update($votingSession, $input);
 
         $association = $votingSession->association;
         $users = $association->associationMembers()->get();
 
         foreach ($users as $user) {
-            Log::info('Processing user: ' . $user->member->id);
             if ($user->member->email) {
                 Mail::to($user->member->email)->send(new \App\Mail\VotingClosed($votingSession));
-                Log::info('Voting closed email sent to: ' . $user->member->email);
-            } else {
-                Log::warning('No email address for user: ' . $user->member->id);
             }
         }
+
         flash()->success("You have closed the vote for <strong>{$votingSession->name}</strong> and the winners have been announced.");
 
         return back();

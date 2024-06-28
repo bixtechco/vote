@@ -96,10 +96,32 @@
                                             Actions
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li><a class="dropdown-item"
-                                                   href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}">Edit</a>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   href="{{ route('main.voting.voting-sessions.show', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                    View
+                                                </a>
                                             </li>
-                                            @if ($session->isActive())
+                                            @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin))
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                       href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        Edit
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form id="delete-user-{{ $session->id }}-form" method="POST"
+                                                          action="{{ route('main.voting.voting-sessions.destroy', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="button" class="dropdown-item"
+                                                                onclick="window.confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $session->id }}-form')">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                            @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->isActive())
                                                 <li>
                                                     <form id="ban-user-{{ $session->id }}-form" method="POST"
                                                           action="{{ route('main.voting.voting-sessions.inactive', ['id' => $association->id, 'votingSession' => $session->id]) }}">
@@ -111,7 +133,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            @if ($session->isInactive())
+                                            @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->isInactive())
                                                 <li>
                                                     <form id="unban-user-{{ $session->id }}-form" method="POST"
                                                           action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
@@ -123,7 +145,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            @if ($session->isDraft())
+                                            @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->isDraft())
                                                 <li>
                                                     <form id="unban-user-{{ $session->id }}-form" method="POST"
                                                           action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
@@ -135,17 +157,6 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            <li>
-                                                <form id="delete-user-{{ $session->id }}-form" method="POST"
-                                                      action="{{ route('main.voting.voting-sessions.destroy', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button type="button" class="dropdown-item"
-                                                            onclick="window.confirmAction('Delete', 'Are you sure you want to delete this user?', 'delete-user-{{ $session->id }}-form')">
-                                                        Delete
-                                                    </button>
-                                                </form>
-                                            </li>
                                             @if (($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin) && $session->winner_ids == null && $session->isActive())
                                                 <li>
                                                     <form id="close-user-{{ $session->id }}-form" method="POST"
@@ -182,10 +193,10 @@
                                     </div>
                                     <div class="modal-body bg-light">
                                         <form
-                                            id="{{ $voteFormId }}"
-                                            class="m-form vote-form"
-                                            method="post"
-                                            action="{{ route('main.voting.voting-sessions.vote', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
+                                                id="{{ $voteFormId }}"
+                                                class="m-form vote-form"
+                                                method="post"
+                                                action="{{ route('main.voting.voting-sessions.vote', [ 'id' => $association->id, 'votingSession' => $session->id ]) }}"
                                         >
                                             @csrf
                                             <input type="hidden" id="block_index" name="block_index" value="">
@@ -204,7 +215,7 @@
                                                                 $user = \Src\People\User::find($candidate);
                                                             @endphp
                                                             <option
-                                                                value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
+                                                                    value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -215,9 +226,9 @@
                                                         data-bs-dismiss="modal">Close
                                                 </button>
                                                 <button
-                                                    class="btn btn-warning"
-                                                    title="Vote"
-                                                    type="submit"
+                                                        class="btn btn-warning"
+                                                        title="Vote"
+                                                        type="submit"
                                                 >
                                                     <i class="la la-check"></i> Vote
                                                 </button>
