@@ -37,20 +37,20 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <div class="table-responsive">
-                <table class="table table-striped gy-7 gs-7">
+                <table class="table align-middle table-row-dashed fs-6 gy-5">
                     <thead>
-                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                        <th colspan="2">User</th>
-                        <th>Email</th>
-                        <th>Phone</th>
+                    <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                        <th class="min-w-125px" colspan="2">User</th>
+                        <th class="min-w-125px">Email</th>
+                        <th class="min-w-125px">Phone</th>
                         @if (request('association'))
                             <th>Role</th>
                         @endif
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="min-w-125px">Status</th>
+                        <th class="text-end min-w-70px">Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="fw-semibold text-gray-600">
                     @php
                         $statusBadgeMap = [
                             Src\People\User::STATUS_ACTIVE => 'success',
@@ -78,10 +78,10 @@
                                 <br>
                                 <span>Affiliate ID: {{ $user->affiliate_id }}</span>
                             </td>
-                            <td style="text-align: center; vertical-align: middle;">
+                            <td >
                                 <a class="m-link" href="mailto:{{ $user->email }}">{{ $user->email }}</a>
                             </td>
-                            <td style="text-align: center; vertical-align: middle;">
+                            <td >
                                 {{ $user->formatted_phone_number }}
                             </td>
                             @if (request('association'))
@@ -99,19 +99,12 @@
                                     @endif
                                 </td>
                             @endif
-                            <td style="text-align: center; vertical-align: middle;">
+                            <td >
                                 @component('manage.components.badge', [ 'type' => $statusBadgeMap[$user->status] ])
                                     {{ $user->status }}
                                 @endcomponent
                             </td>
-                            <td>
-                                {{-- <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('manage.people.users.show', ['id' => $user->id]) }}"
-                                    title="Details"
-                                >
-                                    <i class="la la-eye"></i>
-                                </a> --}}
+                            {{-- <td>
                                 <a
                                     class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                                     href="{{ route('manage.voting.associations.list', ['user' => $user->id]) }}"
@@ -142,111 +135,208 @@
                                         <i class="la la-key"></i>
                                     </a>
                                 @else
-                                @if($user->isVerifying())
-                                    <button
-                                        class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Verify"
-                                        onclick="confirmAction('Verify', 'Are you sure you want to verify this user?', '{{$verifyUserFormId}}')"
+                                    @if($user->isVerifying())
+                                        <button
+                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                            title="Verify"
+                                            onclick="confirmAction('Verify', 'Are you sure you want to verify this user?', '{{$verifyUserFormId}}')"
+                                        >
+                                            <i class="la la-check"></i>
+                                        </button>
+                                        <form
+                                            id="{{ $verifyUserFormId }}"
+                                            class="m-form d-none"
+                                            method="post"
+                                            action="{{ route('manage.people.users.verify', [ 'id' => $user->id ]) }}"
+                                            data-confirm="true"
+                                            data-confirm-type="warning"
+                                            data-confirm-title="Verify <strong>{{ $user->profile->full_name }}</strong>"
+                                            data-confirm-text="You are about to verify this user."
+                                        >
+                                            @method('post')
+                                            @csrf
+                                        </form>
+                                    @endIf
+                                    <a
+                                        class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                                        href="{{ route('manage.people.users.edit', [ 'id' => $user->id ]) }}"
+                                        title="Edit"
                                     >
-                                        <i class="la la-check"></i>
+                                        <i class="la la-edit"></i>
+                                    </a>
+                                    <a
+                                        class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                                        href="{{ route('manage.people.users.edit-password', [ 'id' => $user->id ]) }}"
+                                        title="Change Password"
+                                    >
+                                        <i class="la la-key"></i>
+                                    </a>
+                                    @if ($user->isActive())
+                                        <button
+                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                            title="Ban"
+                                            onclick="confirmAction('Ban', 'Are you sure you want to ban this user?', '{{$banUserFormId}}')"
+                                        >
+                                            <i class="la la-lock"></i>
+                                        </button>
+                                        <form
+                                            id="{{ $banUserFormId }}"
+                                            class="m-form d-none"
+                                            method="post"
+                                            action="{{ route('manage.people.users.ban', [ 'id' => $user->id ]) }}"
+                                            data-confirm="true"
+                                            data-confirm-type="warning"
+                                            data-confirm-title="Ban <strong>{{ $user->profile->full_name }}</strong>"
+                                            data-confirm-text="You are about to ban this user."
+                                        >
+                                            @method('post')
+                                            @csrf
+                                        </form>
+                                    @endif
+                                    @if ($user->isBanned())
+                                        <button
+                                            class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                            title="Unban"
+                                            onclick="confirmAction('Unban', 'Are you sure you want to unban this user?', '{{$unbanUserFormId}}')"
+                                            form="{{ $unbanUserFormId }}"
+                                        >
+                                            <i class="la la-unlock-alt"></i>
+                                        </button>
+                                        <form
+                                            id="{{ $unbanUserFormId }}"
+                                            class="m-form d-none"
+                                            method="post"
+                                            action="{{ route('manage.people.users.unban', [ 'id' => $user->id ]) }}"
+                                            data-confirm="true"
+                                            data-confirm-type="warning"
+                                            data-confirm-title="Unban <strong>{{ $user->profile->full_name }}</strong>"
+                                            data-confirm-text="You are about to unban this user."
+                                        >
+                                            @method('delete')
+                                            @csrf
+                                        </form>
+                                    @endif
+                                    <button
+                                        class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
+                                        title="Delete"
+                                        onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{$deleteUserFormId}}')"
+                                    >
+                                        <i class="la la-trash"></i>
                                     </button>
                                     <form
-                                        id="{{ $verifyUserFormId }}"
+                                        id="{{ $deleteUserFormId }}"
                                         class="m-form d-none"
                                         method="post"
-                                        action="{{ route('manage.people.users.verify', [ 'id' => $user->id ]) }}"
+                                        action="{{ route('manage.people.users.destroy', [ 'id' => $user->id ]) }}"
                                         data-confirm="true"
-                                        data-confirm-type="warning"
-                                        data-confirm-title="Verify <strong>{{ $user->profile->full_name }}</strong>"
-                                        data-confirm-text="You are about to verify this user."
-                                    >
-                                        @method('post')
-                                        @csrf
-                                    </form>
-                                @endIf
-                                <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('manage.people.users.edit', [ 'id' => $user->id ]) }}"
-                                    title="Edit"
-                                >
-                                    <i class="la la-edit"></i>
-                                </a>
-                                <a
-                                    class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                                    href="{{ route('manage.people.users.edit-password', [ 'id' => $user->id ]) }}"
-                                    title="Change Password"
-                                >
-                                    <i class="la la-key"></i>
-                                </a>
-                                @if ($user->isActive())
-                                    <button
-                                        class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Ban"
-                                        onclick="confirmAction('Ban', 'Are you sure you want to ban this user?', '{{$banUserFormId}}')"
-                                    >
-                                        <i class="la la-lock"></i>
-                                    </button>
-                                    <form
-                                        id="{{ $banUserFormId }}"
-                                        class="m-form d-none"
-                                        method="post"
-                                        action="{{ route('manage.people.users.ban', [ 'id' => $user->id ]) }}"
-                                        data-confirm="true"
-                                        data-confirm-type="warning"
-                                        data-confirm-title="Ban <strong>{{ $user->profile->full_name }}</strong>"
-                                        data-confirm-text="You are about to ban this user."
-                                    >
-                                        @method('post')
-                                        @csrf
-                                    </form>
-                                @endif
-                                @if ($user->isBanned())
-                                    <button
-                                        class="btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                        title="Unban"
-                                        onclick="confirmAction('Unban', 'Are you sure you want to unban this user?', '{{$unbanUserFormId}}')"
-                                        form="{{ $unbanUserFormId }}"
-                                    >
-                                        <i class="la la-unlock-alt"></i>
-                                    </button>
-                                    <form
-                                        id="{{ $unbanUserFormId }}"
-                                        class="m-form d-none"
-                                        method="post"
-                                        action="{{ route('manage.people.users.unban', [ 'id' => $user->id ]) }}"
-                                        data-confirm="true"
-                                        data-confirm-type="warning"
-                                        data-confirm-title="Unban <strong>{{ $user->profile->full_name }}</strong>"
-                                        data-confirm-text="You are about to unban this user."
+                                        data-confirm-type="delete"
+                                        data-confirm-title="Delete <strong>{{ $user->profile->full_name }}</strong>"
+                                        data-confirm-text="You are about to delete this user, this procedure is irreversible."
                                     >
                                         @method('delete')
                                         @csrf
                                     </form>
                                 @endif
-                                <button
-                                    class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
-                                    title="Delete"
-                                    onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{$deleteUserFormId}}')"
-                                >
-                                    <i class="la la-trash"></i>
-                                </button>
-                                <form
-                                    id="{{ $deleteUserFormId }}"
-                                    class="m-form d-none"
-                                    method="post"
-                                    action="{{ route('manage.people.users.destroy', [ 'id' => $user->id ]) }}"
-                                    data-confirm="true"
-                                    data-confirm-type="delete"
-                                    data-confirm-title="Delete <strong>{{ $user->profile->full_name }}</strong>"
-                                    data-confirm-text="You are about to delete this user, this procedure is irreversible."
-                                >
-                                    @method('delete')
-                                    @csrf
-                                </form>
-                            @endif
+                            </td> --}}
+                            <td class="text-end">
+                                <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    Actions
+                                    <i class="ki-outline ki-down fs-5 ms-1"></i>         
+                                </a>
+                                <!--begin::Menu-->
+                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                                    <div class="menu-item px-3">
+                                        <a class="menu-link px-3" href="{{ route('manage.voting.associations.list', ['user' => $user->id]) }}" title="Associations">
+                                            Associations
+                                        </a>
+                                    </div>
+                                    <div class="menu-item px-3">
+                                        <a class="menu-link px-3" href="{{ route('manage.voting.voting-sessions.list', ['user' => $user->id]) }}" title="Voting Sessions">
+                                            Voting Sessions
+                                        </a>
+                                    </div>
+                                    @if ($user->isAuthed())
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.account.profile.edit') }}" title="Edit Profile">
+                                                Edit Profile
+                                            </a>
+                                        </div>
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.account.profile.edit-password') }}" title="Change Password">
+                                                Change Password
+                                            </a>
+                                        </div>
+                                    @else
+                                        @if($user->isVerifying())
+                                            <div class="menu-item px-3">
+                                                <a class="menu-link px-3" href="#" title="Verify" onclick="confirmAction('Verify', 'Are you sure you want to verify this user?', '{{ $verifyUserFormId }}')">
+                                                    Verify
+                                                </a>
+                                            </div>
+                                            <form id="{{ $verifyUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.users.verify', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="warning" data-confirm-title="Verify <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to verify this user.">
+                                                @method('post')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.people.users.edit', [ 'id' => $user->id ]) }}" title="Edit Profile">
+                                                Edit Profile
+                                            </a>
+                                        </div>
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.people.users.edit-password', [ 'id' => $user->id ]) }}" title="Change Password">
+                                                Change Password
+                                            </a>
+                                        </div>
+                                        @if ($user->isActive())
+                                            <div class="menu-item px-3">
+                                                <a class="menu-link px-3" href="#" title="Ban" onclick="confirmAction('Ban', 'Are you sure you want to ban this user?', '{{ $banUserFormId }}')">
+                                                    Ban
+                                                </a>
+                                            </div>
+                                            <form id="{{ $banUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.users.ban', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="warning" data-confirm-title="Ban <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to ban this user.">
+                                                @method('post')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        @if ($user->isBanned())
+                                            <div class="menu-item px-3">
+                                                <a class="menu-link px-3" href="#" title="Unban" onclick="confirmAction('Unban', 'Are you sure you want to unban this user?', '{{ $unbanUserFormId }}')">
+                                                    Unban
+                                                </a>
+                                            </div>
+                                            <form id="{{ $unbanUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.users.unban', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="warning" data-confirm-title="Unban <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to unban this user.">
+                                                @method('delete')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="#" title="Delete" onclick="confirmAction('Delete', 'Are you sure you want to delete this user?', '{{ $deleteUserFormId }}')">
+                                                Delete
+                                            </a>
+                                        </div>
+                                        <form id="{{ $deleteUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.users.destroy', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="delete" data-confirm-title="Delete <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to delete this user, this procedure is irreversible.">
+                                            @method('delete')
+                                            @csrf
+                                        </form>
+                                    @endif
+                                </div>
+                                <!--end::Menu-->
                             </td>
+                            
                         </tr>
                     @endforeach
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                @include('manage.components.pagination', [ 'results' => $users ])
+                                @include('manage.components.pagination-counter', ['results' => $users])
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
                 </table>
             </div>
             <!--end::Table-->

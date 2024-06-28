@@ -47,17 +47,17 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <div class="table-responsive">
-                <table class="table table-striped gy-7 gs-7">
+                <table class="table align-middle table-row-dashed fs-6 gy-5">
                     <thead>
-                    <tr class="fw-bold fs-6 text-gray-800">
-                        <th colspan="2">User</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                    <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                        <th class="min-w-125px" colspan="2">User</th>
+                        <th class="min-w-125px">Email</th>
+                        <th class="min-w-125px">Role</th>
+                        <th class="min-w-125px">Status</th>
+                        <th class="text-end min-w-70px">Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="fw-semibold text-gray-600">
                     @php
                         $roleBadgeMap = [
                           Src\Auth\Role::SYSTEM_ROOT => 'danger',
@@ -105,7 +105,7 @@
                                     {{ $user->status }}
                                 @endcomponent
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if ($user->isAuthed())
                                     <a
                                         class="btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
@@ -201,7 +201,72 @@
                                         @csrf
                                     </form>
                                 @endif
+                            </td> --}}
+                            <td class="text-end">
+                                <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    Actions
+                                    <i class="ki-outline ki-down fs-5 ms-1"></i>         
+                                </a>
+                                <!--begin::Menu-->
+                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                                    @if ($user->isAuthed())
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.account.profile.edit') }}" title="Edit">
+                                                Edit Profile
+                                            </a>
+                                        </div>
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.account.profile.edit-password') }}" title="Change Password">
+                                                Change Password
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.people.admins.edit', [ 'id' => $user->id ]) }}" title="Edit">
+                                                Edit Profile
+                                            </a>
+                                        </div>
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="{{ route('manage.people.admins.edit-password', [ 'id' => $user->id ]) }}" title="Change Password">
+                                                Change Password
+                                            </a>
+                                        </div>
+                                        @if ($user->isActive())
+                                            <div class="menu-item px-3">
+                                                <a class="menu-link px-3" href="#" title="Ban" onclick="confirmAction('Ban', 'Are you sure you want to ban this admin?', '{{ $banUserFormId }}')">
+                                                    Ban
+                                                </a>
+                                            </div>
+                                            <form id="{{ $banUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.admins.ban', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="warning" data-confirm-title="Ban <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to ban this admin.">
+                                                @method('post')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        @if ($user->isBanned())
+                                            <div class="menu-item px-3">
+                                                <a class="menu-link px-3" href="#" title="Unban" onclick="confirmAction('Unban', 'Are you sure you want to unban this admin?', '{{ $unbanUserFormId }}')">
+                                                    Unban
+                                                </a>
+                                            </div>
+                                            <form id="{{ $unbanUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.admins.unban', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="warning" data-confirm-title="Unban <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to unban this admin.">
+                                                @method('delete')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                        <div class="menu-item px-3">
+                                            <a class="menu-link px-3" href="#" title="Delete" onclick="confirmAction('Delete', 'Are you sure you want to delete this admin?', '{{ $deleteUserFormId }}')">
+                                                Delete
+                                            </a>
+                                        </div>
+                                        <form id="{{ $deleteUserFormId }}" class="m-form d-none" method="post" action="{{ route('manage.people.admins.destroy', [ 'id' => $user->id ]) }}" data-confirm="true" data-confirm-type="delete" data-confirm-title="Delete <strong>{{ $user->profile->full_name }}</strong>" data-confirm-text="You are about to delete this admin, this procedure is irreversible.">
+                                            @method('delete')
+                                            @csrf
+                                        </form>
+                                    @endif
+                                </div>
+                                <!--end::Menu-->
                             </td>
+                            
                         </tr>
                     @endforeach
                     </tbody>
