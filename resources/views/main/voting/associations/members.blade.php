@@ -32,12 +32,12 @@
                     <!--begin::Toolbar-->
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                         @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
-                        <!--begin::Add user-->
-                        <a href="{{ route('main.voting.associations.show-add-member', ['id' => $association->id]) }}"
-                           class="btn btn-primary">
-                            {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                            New Member
-                        </a>
+                            <!--begin::Add user-->
+                            <a href="{{ route('main.voting.associations.show-add-member', ['id' => $association->id]) }}"
+                               class="btn btn-primary">
+                                {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                                New Member
+                            </a>
                         @endif
                         <!--end::Add user-->
                     </div>
@@ -56,7 +56,7 @@
                             <th>Email</th>
                             <th>Status</th>
                             @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
-                            <th>Actions</th>
+                                <th>Actions</th>
                             @endif
                         </tr>
                         </thead>
@@ -65,6 +65,7 @@
                             @php
                                 $deleteUserFormId = "delete-user-{$member->id}-form";
                                 $setAdminFormId = "set-admin-{$member->id}-form";
+                                $removeAdminFormId = "remove-admin-{$member->id}-form";
                             @endphp
                             <tr>
                                 <td>{{$member->member->profile->full_name}}</td>
@@ -79,42 +80,70 @@
                                 <td>
                                     @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
                                         @if(!$member->is_admin)
-                                        <button
-                                            class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
-                                            title="Delete"
-                                            onclick="confirmAction('Delete', 'Are you sure you want to remove this user?', '{{ $deleteUserFormId }}')"
-                                        >
-                                            <i class="la la-trash"></i>
-                                        </button>
+                                            <button
+                                                    class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
+                                                    title="Delete"
+                                                    onclick="confirmAction('Delete', 'Are you sure you want to remove this user?', '{{ $deleteUserFormId }}')"
+                                            >
+                                                <i class="la la-trash"></i>
+                                            </button>
                                             <form
-                                                id="{{ $deleteUserFormId }}"
-                                                class="m-form d-none"
-                                                method="post"
-                                                action="{{ route('main.voting.associations.remove-member', [ 'id' => $association->id , 'member' => $member->id]) }}"
-                                                data-confirm="true"
-                                                data-confirm-type="delete"
-                                                data-confirm-title="Delete <strong>{{ $member->name }}</strong>"
-                                                data-confirm-text="You are about to delete this user, this procedure is irreversible."
+                                                    id="{{ $deleteUserFormId }}"
+                                                    class="m-form d-none"
+                                                    method="post"
+                                                    action="{{ route('main.voting.associations.remove-member', [ 'id' => $association->id , 'member' => $member->id]) }}"
+                                                    data-confirm="true"
+                                                    data-confirm-type="delete"
+                                                    data-confirm-title="Delete <strong>{{ $member->name }}</strong>"
+                                                    data-confirm-text="You are about to delete this user, this procedure is irreversible."
                                             >
                                                 @method('delete')
                                                 @csrf
                                             </form>
                                             <button
-                                                class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
-                                                title="Delete"
-                                                onclick="confirmAction('Set Admin', 'Are you sure you want to set this user as admin?', '{{ $setAdminFormId }}')"
+                                                    class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
+                                                    title="Set Admin"
+                                                    onclick="confirmAction('Set Admin', 'Are you sure you want to set this user as admin?', '{{ $setAdminFormId }}')"
                                             >
                                                 <i class="la la-user"></i>
                                             </button>
                                             <form
-                                                id="{{ $setAdminFormId }}"
-                                                class="m-form d-none"
-                                                method="post"
-                                                action="{{ route('main.voting.associations.set-admin', [ 'id' => $association->id , 'memberId' => $member->id]) }}"
-                                                data-confirm="true"
-                                                data-confirm-type="delete"
-                                                data-confirm-title="Set <strong>{{ $member->name }} as admin?</strong>"
-                                                data-confirm-text="You are about to set this user as admin."
+                                                    id="{{ $setAdminFormId }}"
+                                                    class="m-form d-none"
+                                                    method="post"
+                                                    action="{{ route('main.voting.associations.set-admin', [ 'id' => $association->id , 'memberId' => $member->user_id]) }}"
+                                                    data-confirm="true"
+                                                    data-confirm-type="delete"
+                                                    data-confirm-title="Set <strong>{{ $member->name }} as admin?</strong>"
+                                                    data-confirm-text="You are about to set this user as admin."
+                                            >
+                                                @method('post')
+                                                @csrf
+                                            </form>
+                                        @endif
+                                    @endif
+                                    @php
+                                        $creator = $association->associationMembers()->orderBy('created_at', 'asc')->first();
+                                    @endphp
+
+                                    @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
+                                        @if($member->is_admin && $member->id !== $creator->id)
+                                            <button
+                                                    class="btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill"
+                                                    title="Remove Admin Role"
+                                                    onclick="confirmAction('Remove Admin Role', 'Are you sure you want to remove this user as admin?', '{{ $removeAdminFormId }}')"
+                                            >
+                                                <i class="la la-user"></i>
+                                            </button>
+                                            <form
+                                                    id="{{ $removeAdminFormId }}"
+                                                    class="m-form d-none"
+                                                    method="post"
+                                                    action="{{ route('main.voting.associations.remove-admin', ['id' => $association->id, 'memberId' => $member->user_id]) }}"
+                                                    data-confirm="true"
+                                                    data-confirm-type="delete"
+                                                    data-confirm-title="Remove <strong>{{ $member->name }} as admin?</strong>"
+                                                    data-confirm-text="You are about to remove this user as admin."
                                             >
                                                 @method('post')
                                                 @csrf
@@ -123,10 +152,18 @@
                                     @endif
                                 </td>
                             </tr>
-                        </tbody>
                         @endforeach
 
+                        @foreach($invitations as $invitation)
+                            <tr>
+                                <td>Invited User</td>
+                                <td>{{ $invitation->email }}</td>
+                                <td><span class="badge badge-warning">Invitation Sent</span></td>
+                                <td></td>
+                            </tr>
+                        @endforeach
 
+                        </tbody>
                     </table>
 
                 </div>

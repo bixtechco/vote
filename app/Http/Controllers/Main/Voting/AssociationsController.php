@@ -126,9 +126,10 @@ class AssociationsController extends AuthedController
         $association = Association::findOrFail($id);
         $members = $association->associationMembers()->get();
         $member = $members->first();
+        $invitations = Invitation::where('association_id', $association->id)->get();
 
 
-        return view('main.voting.associations.members', compact('association', 'members', 'member'));
+        return view('main.voting.associations.members', compact('association', 'members', 'member', 'invitations'));
     }
 
     public function showAddMember($id)
@@ -201,12 +202,41 @@ class AssociationsController extends AuthedController
 
     public function setAdmin($id, $memberId)
     {
+        Log::info("SetAdmin called with association ID: $id and member ID: $memberId");
+
         $association = Association::findOrFail($id);
-        $member = $association->associationMembers()->where('id', $memberId)->first();
+        $member = $association->associationMembers()->where('user_id', $memberId)->first();
+
+        if (!$member) {
+            Log::error("Member not found with ID: $memberId");
+            return back()->with('error', 'Member not found');
+        }
 
         AssociationRepository::setAdmin($association, $member);
-        return back();
+
+        Log::info("Member with ID: $memberId set as admin for association ID: $id");
+        return back()->with('success', 'Member set as admin');
     }
+
+    public function removeAdmin($id, $memberId)
+    {
+        Log::info("SetAdmin called with association ID: $id and member ID: $memberId");
+
+        $association = Association::findOrFail($id);
+        $member = $association->associationMembers()->where('user_id', $memberId)->first();
+
+        if (!$member) {
+            Log::error("Member not found with ID: $memberId");
+            return back()->with('error', 'Member not found');
+        }
+
+        AssociationRepository::removeAdmin($association, $member);
+
+        Log::info("Member with ID: $memberId set as admin for association ID: $id");
+        return back()->with('success', 'Member set as admin');
+    }
+
+
 
     public function removeMember($id, $memberId)
     {

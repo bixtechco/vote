@@ -112,8 +112,19 @@ class AssociationRepository
     public function setAdmin(Association $association, $member)
     {
         return DB::transaction(function () use ($association, $member) {
-            $association->associationMembers()->where('user_id', $member->id)->update([
+            $association->associationMembers()->where('user_id', $member->user_id)->update([
                 'is_admin' => true,
+            ]);
+
+            return $association;
+        });
+    }
+
+    public function removeAdmin(Association $association, $member)
+    {
+        return DB::transaction(function () use ($association, $member) {
+            $association->associationMembers()->where('user_id', $member->user_id)->update([
+                'is_admin' => false,
             ]);
 
             return $association;
