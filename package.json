@@ -17,6 +17,8 @@
         "@ckeditor/ckeditor5-build-classic": "40.0.0",
         "@ckeditor/ckeditor5-build-decoupled-document": "40.0.0",
         "@ckeditor/ckeditor5-build-inline": "40.0.0",
+        "@dfinity/agent": "^1.4.0",
+        "@dfinity/auth-client": "^1.4.0",
         "@eonasdan/tempus-dominus": "^6.7.16",
         "@fortawesome/fontawesome-free": "^6.4.2",
         "@funded-labs/plug-mobile-sdk": "^0.1.3",
