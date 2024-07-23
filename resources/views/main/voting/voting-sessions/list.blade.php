@@ -294,88 +294,106 @@ Voting Sessions Overview
 @push('scripts')
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        $(document).ready(function () {
-            const backendCanisterId = 'bd3sg-teaaa-aaaaa-qaaba-cai';
-            const backendInterfaceFactory = ({ IDL }) => {
-                return IDL.Service({
-                    'vote': IDL.Func([], [IDL.Opt(IDL.Nat64)], []),
-                });
-            };
+       $(document).ready(function () {
+    const backendCanisterId = 'bd3sg-teaaa-aaaaa-qaaba-cai';
 
-            let backendActor;
-
-            const initializeActor = async () => {
-                try {
-                    await window.agentInitialized;
-                    backendActor = await window.Actor.createActor(backendInterfaceFactory, {
-                        agent: window.agent,
-                        canisterId: backendCanisterId,
-                    });
-                    console.log('Actor created:', backendActor);
-                } catch (error) {
-                    console.error('Error creating actor:', error);
-                }
-            };
-
-            initializeActor();
-
-            window.showConfirmationModal = function (formId) {
-                $('.modal').modal('hide');
-
-                $('#card-confirmation').data('formId', formId).fadeIn();
-            };
-
-            $('#confirmActionButton').on('click', async function () {
-                const formId = $('#card-confirmation').data('formId');
-                const form = $('#' + formId);
-
-                try {
-                    await window.agentInitialized;
-                    const voteResult = await backendActor.vote();
-                    console.log('Vote result:', voteResult);
-
-                    if (voteResult !== null) {
-                        console.log('Submitting form...');
-                        const blockIndex = voteResult[0].toString();
-                        console.log('Block index:', blockIndex);
-
-                        const formData = new FormData(form[0]);
-                        formData.append('block_index', blockIndex);
-
-                        const response = await fetch(form.attr('action'), {
-                            method: 'POST',
-                            body: formData,
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-
-                        const data = await response.json();
-                        console.log('Response data:', data);
-                        window.location.reload();
-                    } else {
-                        throw new Error('Vote failed: Empty or invalid result');
-                    }
-                } catch (error) {
-                    console.error('Vote failed:', error);
-                    
-                    // Close all open modals and the confirmation card
-                    $('.modal').modal('hide');
-                    $('#card-confirmation').fadeOut();
-                    
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Insufficient Token',
-                        text: 'Please top up tokens to your canister.',
-                    });
-                }
-            });
-
-            $('.decline').on('click', function () {
-                $('#card-confirmation').fadeOut();
-            });
+    const backendInterfaceFactory = ({ IDL }) => {
+        return IDL.Service({
+            'vote': IDL.Func([IDL.Text], [IDL.Opt(IDL.Nat64)], []),
         });
+    };
+
+    let backendActor;
+
+    const initializeActor = async () => {
+        try {
+            await window.agentInitialized;
+            backendActor = await window.Actor.createActor(backendInterfaceFactory, {
+                agent: window.agent,
+                canisterId: backendCanisterId,
+            });
+            console.log('Actor created:', backendActor);
+        } catch (error) {
+            console.error('Error creating actor:', error);
+        }
+    };
+
+    initializeActor();
+
+    window.showConfirmationModal = function (formId) {
+        $('.modal').modal('hide');
+        $('#card-confirmation').data('formId', formId).fadeIn();
+    };
+
+    $('#confirmActionButton').on('click', async function () {
+    const formId = $('#card-confirmation').data('formId');
+    const form = $('#' + formId);
+
+    const formData = new FormData(form[0]);
+
+    try {
+        const response = await fetch(form.attr('action'), {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        if (data.success) {
+            const details = data.details; 
+            console.log('Details:', details);
+
+            const voteResult = await backendActor.vote(details);
+            console.log('Vote result:', voteResult);
+
+            if (voteResult !== null) {
+                console.log('Submitting form...');
+                const blockIndex = BigInt(voteResult[0].toString());
+                console.log('Block index:', blockIndex);
+
+                formData.append('block_index', blockIndex);
+
+                const finalResponse = await fetch(form.attr('action'), {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!finalResponse.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const finalData = await finalResponse.json();
+                console.log('Final response data:', finalData);
+                window.location.reload();
+            } else {
+                throw new Error('Vote failed: Empty or invalid result');
+            }
+        } else {
+            throw new Error('Initial form submission failed');
+        }
+    } catch (error) {
+        console.error('Vote failed:', error);
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message,
+        });
+
+        $('.modal').modal('hide');
+        $('#card-confirmation').fadeOut();
+    }
+
+    $('.decline').on('click', function () {
+        $('#card-confirmation').fadeOut();
+    });
+});
+
     </script>
 @endpush
 

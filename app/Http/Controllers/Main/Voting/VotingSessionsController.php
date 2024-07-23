@@ -24,18 +24,21 @@ class VotingSessionsController extends AuthedController
     {
         $association = Association::findOrFail($id);
         $query = VotingSession::where('association_id', $association->id);
-
+    
+        $votingSessionId = null; 
+    
         if (request()->has('voting_session_id')) {
             $votingSessionId = request()->input('voting_session_id');
             $query->where('id', $votingSessionId);
         }
-
+    
         $votingSessions = $query->get();
-
+    
         return view('main.voting.voting-sessions.list', compact('votingSessions', 'association'))->with([
             'filters' => $queried->filters(),
         ]);
     }
+    
 
 
     public function create($id)
@@ -142,14 +145,14 @@ class VotingSessionsController extends AuthedController
             $winnerQty[$roleCandidateId['position_name']] = $roleCandidateId['winner_qty'];
         }
 
-        $input['voting_sessions']['name'] = $request->input('name');
-        $input['voting_sessions']['description'] = $request->input('description');
-        $input['voting_sessions']['year'] = $request->input('year');
+        $input['voting_session']['name'] = $request->input('name');
+        $input['voting_session']['description'] = $request->input('description');
+        $input['voting_session']['year'] = $request->input('year');
         $input['voting_session']['role_candidate_ids'] = json_encode($formattedRoleCandidateIds);
-        $input['voting_sessions']['winner_qty'] = json_encode($winnerQty);
-        $input['voting_sessions']['start_date'] = $request->input('start_date');
-        $input['voting_sessions']['end_date'] = $request->input('end_date');
-        $input['voting_sessions']['status'] = $request->input('status');
+        $input['voting_session']['winner_qty'] = json_encode($winnerQty);
+        $input['voting_session']['start_date'] = $request->input('start_date');
+        $input['voting_session']['end_date'] = $request->input('end_date');
+        $input['voting_session']['status'] = $request->input('status');
 
         $votingSession = VotingSessionRepository::update($votingSession, $input);
 
@@ -194,9 +197,9 @@ class VotingSessionsController extends AuthedController
     public function vote(Request $request, $id, $votingSessionId)
     {
         Log::info('Request data:', $request->all());
-
+    
         $votingSession = VotingSession::findOrFail($votingSessionId);
-
+    
         $votes = $request->input('votes');
         $blockIndex = $request->input('block_index');
         Log::info('Block index:', ['blockIndex' => $blockIndex]);
@@ -205,18 +208,36 @@ class VotingSessionsController extends AuthedController
         $input['voting_session_member']['user_id'] = auth()->id();
         $input['voting_session_member']['votes'] = json_encode($votes);
         $input['voting_session_member']['block_index'] = $blockIndex;
-
+    
+        $userName = auth()->user()->profile->full_name;
+        $voteDetails = [];
+        foreach ($votes as $position => $userId) {
+            $user = User::find($userId);
+            if ($user) {
+                $voteDetails[] = "{$position}: {$user->profile->full_name}";
+            } else {
+                $voteDetails[] = "{$position}: User {$userId}";
+            }
+        }
+        $voteDetailsString = implode(', ', $voteDetails);
+        $details = "{$userName} voted for {$voteDetailsString} in {$votingSession->name}";
+        $input['voting_session_member']['memo'] = $details;
+    
+        Log::info($details);
+    
         Log::info('Voting session member input:', $input);
         $votingSessionMember = VotingSessionMemberRepository::create($input);
         Log::info('Created voting session member:', $votingSessionMember->toArray());
-
+    
         flash()->success("You have voted for <strong>{$votingSession->name}</strong>.");
-
+    
         return response()->json([
             'success' => true,
             'votingSessionMember' => $votingSessionMember,
+            'details' => $details,
         ]);
     }
+    
 
     public function closeVote(Request $request, $id, $votingSessionId)
     {

@@ -30,6 +30,7 @@ Route::group([
     Route::delete('/voting/associations/{id}/members/{member}/delete', 'App\Http\Controllers\Main\Voting\AssociationsController@removeMember')->name('main.voting.associations.remove-member');
     Route::post('/voting/associations/{id}/members/{memberId}/admin', 'App\Http\Controllers\Main\Voting\AssociationsController@setAdmin')->name('main.voting.associations.set-admin');
     Route::post('/voting/associations/{id}/members/{memberId}/remove-admin', 'App\Http\Controllers\Main\Voting\AssociationsController@removeAdmin')->name('main.voting.associations.remove-admin');
+    Route::post('/voting/associations/{id}/import-members', 'App\Http\Controllers\Main\Voting\AssociationsController@importMembers')->name('main.voting.associations.import-members');
 
     Route::get('/voting/associations/{id}/voting-sessions', 'App\Http\Controllers\Main\Voting\VotingSessionsController@index')->name('main.voting.voting-sessions.list');
     Route::get('/voting/associations/{id}/voting-sessions/create', 'App\Http\Controllers\Main\Voting\VotingSessionsController@create')->name('main.voting.voting-sessions.create');

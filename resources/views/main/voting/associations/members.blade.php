@@ -34,10 +34,19 @@
                         @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
                             <!--begin::Add user-->
                             <a href="{{ route('main.voting.associations.show-add-member', ['id' => $association->id]) }}"
-                               class="btn btn-primary">
+                               class="btn btn-primary mr-3">
                                 {!! getIcon('plus', 'fs-2', '', 'i') !!}
                                 New Member
                             </a>
+
+                            <form id="importEmailsForm"
+                                  action="{{ route('main.voting.associations.import-members', ['id' => $association->id]) }}"
+                                  method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <input type="file" class="form-control d-none" id="import" name="import" accept=".xlsx,.xls">
+                                <button type="button" class="btn btn-primary" id="showFileInputButton">Import Emails</button>
+                            </form>
+
                         @endif
                         <!--end::Add user-->
                     </div>
@@ -172,3 +181,23 @@
         @endcomponent
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const showFileInputButton = document.getElementById('showFileInputButton');
+            const emailFileInput = document.getElementById('import');
+            const importEmailsForm = document.getElementById('importEmailsForm');
+
+            showFileInputButton.addEventListener('click', function () {
+                emailFileInput.click();
+            });
+
+            emailFileInput.addEventListener('change', function () {
+                if (emailFileInput.files.length > 0) {
+                    importEmailsForm.submit();
+                }
+            });
+        });
+    </script>
+@endpush

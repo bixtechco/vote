@@ -74,8 +74,8 @@
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if(auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin)
                                             <a class="dropdown-item" href="{{ route('main.voting.associations.edit', ['id' => $association->id]) }}">Edit</a>
-                                            @endif
                                             <a class="dropdown-item" href="{{ route('main.voting.associations.view-members', ['id' => $association->id]) }}">View All Association Members</a>
+                                            @endif
                                             <a class="dropdown-item" href="{{ route('main.voting.voting-sessions.list', ['id' => $association->id]) }}">View All Voting Sessions</a>
                                             @if (auth()->user()->associations()->where('id', $association->id)->first()->pivot->is_admin && $association->isActive())
                                                 <a class="dropdown-item" href="#" onclick="confirmAction('Inactive', 'Are you sure you want to inactive this user?', 'ban-user-{{ $association->id }}-form')">Inactive</a>

@@ -7,11 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\Voting\Association\StoreRequest;
 use App\Http\Requests\Main\Voting\Association\UpdateRequest;
 use App\Http\Requests\Main\Voting\Association\QueryRequest;
+use App\Imports\EmailsImport;
 use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Mail;
 use Src\Auth\Role;
 use Src\People\User;
@@ -247,5 +249,19 @@ class AssociationsController extends AuthedController
         return back();
 
     }
+
+    public function importMembers(Request $request, $id)
+    {
+        $request->validate([
+            'import' => 'required|mimes:xlsx,xls',
+        ]);
+
+        $association = Association::findOrFail($id);
+
+        Excel::import(new EmailsImport($association->id), $request->file('import'));
+
+        return back()->with('success', 'Emails imported successfully.');
+    }
+
 
 }
