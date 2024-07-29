@@ -147,7 +147,7 @@
                 $('#ii-login-button').click(async function () {
                     try {
                         await window.authClient.login({
-                            identityProvider: 'http://127.0.0.1:4943/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai', 
+                            identityProvider: 'http://127.0.0.1:4943/?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai', 
                             onSuccess: async () => {
                                 const identity = window.authClient.getIdentity();
                                 const principal = identity.getPrincipal();

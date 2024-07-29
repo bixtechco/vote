@@ -45,6 +45,7 @@ Route::group([
     Route::post('/voting/associations/{id}/voting-sessions/{votingSession}/close-vote', 'App\Http\Controllers\Main\Voting\VotingSessionsController@closeVote')->name('main.voting.voting-sessions.close-vote');
     Route::get('/voting/associations/{id}/voting-sessions/{votingSession}/results', 'App\Http\Controllers\Main\Voting\VotingSessionsController@showResults')->name('main.voting.voting-sessions.show-results');
     Route::get('/voting/associations/{id}/voting-sessions/{votingSession}/admin-results', 'App\Http\Controllers\Main\Voting\VotingSessionsController@showAdminResults')->name('main.voting.voting-sessions.show-admin-results');
+    Route::get('/voting/associations/{id}/voting-sessions/{votingSession}/vote/revert', 'App\Http\Controllers\Main\Voting\VotingSessionsController@revert')->name('main.voting.voting-sessions.revert');
 
     Route::get('/voting/voting-sessions/history', 'App\Http\Controllers\Main\Voting\VotingSessionsController@history')->name('main.voting.voting-sessions.history');
 

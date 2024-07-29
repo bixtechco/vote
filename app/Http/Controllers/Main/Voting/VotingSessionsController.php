@@ -24,21 +24,21 @@ class VotingSessionsController extends AuthedController
     {
         $association = Association::findOrFail($id);
         $query = VotingSession::where('association_id', $association->id);
-    
-        $votingSessionId = null; 
-    
+
+        $votingSessionId = null;
+
         if (request()->has('voting_session_id')) {
             $votingSessionId = request()->input('voting_session_id');
             $query->where('id', $votingSessionId);
         }
-    
+
         $votingSessions = $query->get();
-    
+
         return view('main.voting.voting-sessions.list', compact('votingSessions', 'association'))->with([
             'filters' => $queried->filters(),
         ]);
     }
-    
+
 
 
     public function create($id)
@@ -113,7 +113,7 @@ class VotingSessionsController extends AuthedController
                     'isWinner' => $isWinner
                 ];
             }
-            usort($candidates[$position], function($a, $b) {
+            usort($candidates[$position], function ($a, $b) {
                 return $b['votes'] - $a['votes'];
             });
         }
@@ -195,71 +195,62 @@ class VotingSessionsController extends AuthedController
     }
 
     public function vote(Request $request, $id, $votingSessionId)
-{
-    Log::info('Request data:', $request->all());
-
-    $votingSession = VotingSession::findOrFail($votingSessionId);
-
-    $votes = $request->input('votes');
-    $blockIndex = $request->input('block_index');
-    Log::info('Block index:', ['blockIndex' => $blockIndex]);
-
-    $input['voting_session_member']['association_id'] = $id;
-    $input['voting_session_member']['voting_session_id'] = $votingSessionId;
-    $input['voting_session_member']['user_id'] = auth()->id();
-    $input['voting_session_member']['votes'] = json_encode($votes);
-
-    $userName = auth()->user()->profile->full_name;
-    $voteDetails = [];
-    foreach ($votes as $position => $userId) {
-        $user = User::find($userId);
-        if ($user) {
-            $voteDetails[] = "{$position}: {$user->profile->full_name}";
-        } else {
-            $voteDetails[] = "{$position}: User {$userId}";
+    {
+        Log::info('Request data:', $request->all());
+    
+        $votingSession = VotingSession::findOrFail($votingSessionId);
+    
+        $votes = $request->input('votes');
+        $blockIndex = $request->input('block_index');
+        Log::info('Block index:', ['blockIndex' => $blockIndex]);
+    
+        $input['voting_session_member']['association_id'] = $id;
+        $input['voting_session_member']['voting_session_id'] = $votingSessionId;
+        $input['voting_session_member']['user_id'] = auth()->id();
+        $input['voting_session_member']['votes'] = json_encode($votes);
+        $input['voting_session_member']['block_index'] = $blockIndex; // Set the block_index
+    
+        $userName = auth()->user()->profile->full_name;
+        $voteDetails = [];
+        foreach ($votes as $position => $userId) {
+            $user = User::find($userId);
+            if ($user) {
+                $voteDetails[] = "{$position}: {$user->profile->full_name}";
+            } else {
+                $voteDetails[] = "{$position}: User {$userId}";
+            }
         }
-    }
-    $voteDetailsString = implode(', ', $voteDetails);
-    $details = "{$userName} voted for {$voteDetailsString} in {$votingSession->name}";
-    $input['voting_session_member']['memo'] = $details;
-
-    Log::info($details);
-
-    if ($blockIndex) {
-        $votingSessionMember = VotingSessionMember::where('user_id', auth()->id())
-            ->where('voting_session_id', $votingSessionId)
-            ->latest()
-            ->first();
-
-        if ($votingSessionMember) {
-            $votingSessionMember->update(['block_index' => $blockIndex]);
-            Log::info('Updated voting session member with block index:', $votingSessionMember->toArray());
-
+        $voteDetailsString = implode(', ', $voteDetails);
+        $details = "{$userName} voted for {$voteDetailsString} in {$votingSession->name}";
+        $input['voting_session_member']['memo'] = $details;
+    
+        Log::info($details);
+    
+        $votingSessionMember = null; 
+    
+        if ($blockIndex) {
+            $votingSessionMember = VotingSessionMemberRepository::create($input);
+            Log::info('Created voting session member:', $votingSessionMember->toArray());
+    
             $start = 1;
             $length = $blockIndex;
             $command = "dfx canister call ryjl3-tyaaa-aaaaa-aaaba-cai query_blocks '(record {start = {$start}: nat64; length = {$length}: nat64})'";
             Log::info('Executing command:', ['command' => $command]);
             exec($command, $output, $return_var);
-
+    
             Log::info('Command output:', ['output' => $output]);
-        } else {
-            Log::error('Voting session member not found for update');
-            return response()->json(['success' => false, 'message' => 'Voting session member not found'], 404);
         }
-    } else {
-        Log::info('Voting session member input:', $input);
-        $votingSessionMember = VotingSessionMemberRepository::create($input);
-        Log::info('Created voting session member:', $votingSessionMember->toArray());
+    
+        flash()->success("You have voted for <strong>{$votingSession->name}</strong>.");
+    
+        return response()->json([
+            'success' => true,
+            'votingSessionMember' => $votingSessionMember,
+            'details' => $details,
+        ]);
     }
-
-    flash()->success("You have voted for <strong>{$votingSession->name}</strong>.");
-
-    return response()->json([
-        'success' => true,
-        'votingSessionMember' => $votingSessionMember,
-        'details' => $details,
-    ]);
-}
+    
+    
 
     public function closeVote(Request $request, $id, $votingSessionId)
     {
@@ -315,4 +306,19 @@ class VotingSessionsController extends AuthedController
         return view('main.voting.voting-sessions.history', compact('votingSessionMembers'));
     }
 
+    public function revert(Request $request, $id, $votingSession)
+    {
+        $votingSessionMember = VotingSessionMember::where('association_id', $id)
+            ->where('voting_session_id', $votingSession)
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+    
+        if ($votingSessionMember) {
+            $votingSessionMember->delete();
+            return response()->json(['success' => true, 'message' => 'Vote reverted successfully']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Voting session member not found'], 404);
+        }
+    }
 }

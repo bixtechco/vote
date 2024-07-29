@@ -303,7 +303,7 @@ Voting Sessions Overview
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
 $(document).ready(function () {
-    const backendCanisterId = 'be2us-64aaa-aaaaa-qaabq-cai';
+    const backendCanisterId = 'bd3sg-teaaa-aaaaa-qaaba-cai';
 
     const backendInterfaceFactory = ({IDL}) => {
         return IDL.Service({
@@ -333,7 +333,6 @@ $(document).ready(function () {
         $('#card-confirmation').data('formId', formId).fadeIn();
     };
 
-    // Remove any existing event handlers before attaching the new one
     $('#confirmActionButton').off('click').on('click', async function() {
         const formId = $('#card-confirmation').data('formId');
         const form = $('#' + formId);
@@ -359,8 +358,7 @@ $(document).ready(function () {
                 const voteResult = await backendActor.vote(details);
                 console.log('Vote result:', voteResult);
 
-                if (voteResult !== null) {
-                    console.log('Submitting form...');
+                if (voteResult && voteResult.length > 0 && voteResult[0] !== null) {
                     const blockIndex = BigInt(voteResult[0].toString());
                     console.log('Block index:', blockIndex);
 
@@ -407,6 +405,7 @@ $(document).ready(function () {
         $('#card-confirmation').fadeOut();
     });
 });
+
 
 </script>
 @endpush
