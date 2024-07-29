@@ -303,7 +303,7 @@ Voting Sessions Overview
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
 $(document).ready(function () {
-    const backendCanisterId = 'bd3sg-teaaa-aaaaa-qaaba-cai';
+    const backendCanisterId = 'be2us-64aaa-aaaaa-qaabq-cai';
 
     const backendInterfaceFactory = ({IDL}) => {
         return IDL.Service({
