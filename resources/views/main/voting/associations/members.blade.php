@@ -43,8 +43,10 @@
                                   action="{{ route('main.voting.associations.import-members', ['id' => $association->id]) }}"
                                   method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <input type="file" class="form-control d-none" id="import" name="import" accept=".xlsx,.xls">
-                                <button type="button" class="btn btn-primary" id="showFileInputButton">Import Emails</button>
+                                <input type="file" class="form-control d-none" id="import" name="import"
+                                       accept=".xlsx,.xls">
+                                <button type="button" class="btn btn-primary" id="showFileInputButton">Import Emails
+                                </button>
                             </form>
 
                         @endif

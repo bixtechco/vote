@@ -9,27 +9,29 @@ Voting Sessions Overview
 {{ Breadcrumbs::render('manage.people.users.list') }}
 @endsection
 
-@include('main.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' => 'Are you sure you want to perform this action?'])
+@include('main.components.modal', ['id' => 'modal', 'title' => 'Confirm Action', 'submitButton' => 'Confirm', 'slot' =>
+'Are you sure you want to perform this action?'])
 
 <div class="card p-0">
     @component('main.components.portlet', [
     'headText' => "View Voting Sessions of Association #{$association->name}",
     'headIcon' => 'flaticon-user',
     'backUrl' => route('main.voting.associations.list'),
-])
+    ])
     <!--begin::Card header-->
     <div class="card-header border-0 pt-6 d-flex justify-content-between">
         <div class="card-title">
             <h3>Voting Sessions Overview</h3>
         </div>
-        @if($association->associationMembers->firstWhere('user_id', auth()->user()->id) && $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin)
-            <div class="card-toolbar">
-                <a href="{{ route('main.voting.voting-sessions.create', ['id' => $association->id]) }}"
-                    class="btn btn-primary">
-                    {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                    New Voting Session
-                </a>
-            </div>
+        @if($association->associationMembers->firstWhere('user_id', auth()->user()->id) &&
+        $association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin)
+        <div class="card-toolbar">
+            <a href="{{ route('main.voting.voting-sessions.create', ['id' => $association->id]) }}"
+                class="btn btn-primary">
+                {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                New Voting Session
+            </a>
+        </div>
         @endif
     </div>
     <!--end::Card header-->
@@ -38,152 +40,158 @@ Voting Sessions Overview
     <div class="card-body p-2">
         <div class="row">
             @php
-                $statusBadgeMap = [
-                    Src\Voting\VotingSession::STATUS_ACTIVE => 'success',
-                    Src\Voting\VotingSession::STATUS_INACTIVE => 'danger',
-                    Src\Voting\VotingSession::STATUS_DRAFT => 'warning',
-                ];
+            $statusBadgeMap = [
+            Src\Voting\VotingSession::STATUS_ACTIVE => 'success',
+            Src\Voting\VotingSession::STATUS_INACTIVE => 'danger',
+            Src\Voting\VotingSession::STATUS_DRAFT => 'warning',
+            ];
             @endphp
             @foreach($votingSessions as $session)
-                        @php
-                            $voteFormId = "vote-{$session->id}-form";
-                            $modalId = "vote-modal-{$session->id}";
-                        @endphp
-                        <div class="col-md-4">
-                            <div class="card mb-4 shadow-sm">
-                                <div class="card-header">
-                                    <h4 class="card-title">{{ $session->name }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    <p>{!! $session->description !!}</p>
-                                    <p>Year: {{ $session->year }}</p>
-                                    <p>Created by: {{ \Src\People\User::find($session->created_by)->profile->full_name }}</p>
-                                    <p>Status:
-                                        <span class="badge badge-{{ $statusBadgeMap[$session->status] }}">
-                                            {{ Src\Voting\VotingSession::STATUSES[$session->status]['name'] }}
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-between">
-                                        @if ($session->votingSessionMembers->where('user_id', auth()->user()->id)->isEmpty() && $session->isActive())
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
-                                                Vote
-                                            </button>
-                                        @endif
-                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            Actions
+            @php
+            $voteFormId = "vote-{$session->id}-form";
+            $modalId = "vote-modal-{$session->id}";
+            @endphp
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="card-title">{{ $session->name }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>{!! $session->description !!}</p>
+                        <p>Year: {{ $session->year }}</p>
+                        <p>Created
+                            by: {{ \Src\People\User::find($session->created_by)->profile->full_name }}</p>
+                        <p>Status:
+                            <span class="badge badge-{{ $statusBadgeMap[$session->status] }}">
+                                {{ Src\Voting\VotingSession::STATUSES[$session->status]['name'] }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            @if ($session->votingSessionMembers->where('user_id', auth()->user()->id)->isEmpty() &&
+                            $session->isActive())
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
+                                Vote
+                            </button>
+                            @endif
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item"
+                                        href="{{ route('main.voting.voting-sessions.show', ['id' => $association->id, 'votingSession' => $session->id]) }}">View</a>
+                                </li>
+                                @if ($association->associationMembers->firstWhere('user_id',
+                                auth()->user()->id)->is_admin)
+                                <li><a class="dropdown-item"
+                                        href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}">Edit</a>
+                                </li>
+                                <li>
+                                    <form id="delete-user-{{ $session->id }}-form" method="POST"
+                                        action="{{ route('main.voting.voting-sessions.destroy', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="button" class="dropdown-item"
+                                            onclick="window.confirmAction('Delete', 'Are you sure you want to delete this session?', 'delete-user-{{ $session->id }}-form')">
+                                            Delete
                                         </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li><a class="dropdown-item"
-                                                    href="{{ route('main.voting.voting-sessions.show', ['id' => $association->id, 'votingSession' => $session->id]) }}">View</a>
-                                            </li>
-                                            @if ($association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin)
-                                                <li><a class="dropdown-item"
-                                                        href="{{ route('main.voting.voting-sessions.edit', ['id' => $association->id, 'votingSession' => $session->id]) }}">Edit</a>
-                                                </li>
-                                                <li>
-                                                    <form id="delete-user-{{ $session->id }}-form" method="POST"
-                                                        action="{{ route('main.voting.voting-sessions.destroy', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button type="button" class="dropdown-item"
-                                                            onclick="window.confirmAction('Delete', 'Are you sure you want to delete this session?', 'delete-user-{{ $session->id }}-form')">
-                                                            Delete
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            @endif
-                                            @if ($association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin && $session->isActive())
-                                                <li>
-                                                    <form id="ban-user-{{ $session->id }}-form" method="POST"
-                                                        action="{{ route('main.voting.voting-sessions.inactive', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                                        @csrf
-                                                        <button type="button" class="dropdown-item"
-                                                            onclick="window.confirmAction('Inactive', 'Are you sure you want to deactivate this session?', 'ban-user-{{ $session->id }}-form')">
-                                                            Inactive
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            @elseif ($association->associationMembers->firstWhere('user_id', auth()->user()->id)->is_admin && $session->isInactive())
-                                                <li>
-                                                    <form id="activate-user-{{ $session->id }}-form" method="POST"
-                                                        action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                                        @csrf
-                                                        <button type="button" class="dropdown-item"
-                                                            onclick="window.confirmAction('Active', 'Are you sure you want to activate this session?', 'activate-user-{{ $session->id }}-form')">
-                                                            Active
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            @else ($association->associationMembers->firstWhere('user_id', au
-                                                   t            h()->user()->id)->is_admin && $session->isDraft())
-                                                                <li>
-                                                                    <form id="activate-user-{{ $session->id }}-form" method="POST"
-                                                                        action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                                                        @csrf
-                                                                        <button type="button" class="dropdown-item"
-                                                                            onclick="window.confirmAction('Active', 'Are you sure you want to activate this session?', 'activate-user-{{ $session->id }}-form')">
-                                                                            Active
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                                    </form>
+                                </li>
+                                @endif
+                                @if ($association->associationMembers->firstWhere('user_id',
+                                auth()->user()->id)->is_admin && $session->isActive())
+                                <li>
+                                    <form id="ban-user-{{ $session->id }}-form" method="POST"
+                                        action="{{ route('main.voting.voting-sessions.inactive', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                        @csrf
+                                        <button type="button" class="dropdown-item"
+                                            onclick="window.confirmAction('Inactive', 'Are you sure you want to deactivate this session?', 'ban-user-{{ $session->id }}-form')">
+                                            Inactive
+                                        </button>
+                                    </form>
+                                </li>
+                                @elseif ($association->associationMembers->firstWhere('user_id',
+                                auth()->user()->id)->is_admin && $session->isInactive())
+                                <li>
+                                    <form id="activate-user-{{ $session->id }}-form" method="POST"
+                                        action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                        @csrf
+                                        <button type="button" class="dropdown-item"
+                                            onclick="window.confirmAction('Active', 'Are you sure you want to activate this session?', 'activate-user-{{ $session->id }}-form')">
+                                            Active
+                                        </button>
+                                    </form>
+                                </li>
+                                @else ($association->associationMembers->firstWhere('user_id', au
+                                t h()->user()->id)->is_admin && $session->isDraft())
+                                <li>
+                                    <form id="activate-user-{{ $session->id }}-form" method="POST"
+                                        action="{{ route('main.voting.voting-sessions.active', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                        @csrf
+                                        <button type="button" class="dropdown-item"
+                                            onclick="window.confirmAction('Active', 'Are you sure you want to activate this session?', 'activate-user-{{ $session->id }}-form')">
+                                            Active
+                                        </button>
+                                    </form>
+                                </li>
+                                @endif
+                            </ul>
                         </div>
-                        <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="voteModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content shadow-lg">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="voteModalLabel">Vote</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body bg-light">
-                                        <form id="{{ $voteFormId }}" class="m-form vote-form" method="post"
-                                            action="{{ route('main.voting.voting-sessions.vote', ['id' => $association->id, 'votingSession' => $session->id]) }}">
-                                            @csrf
-                                            <input type="hidden" id="block_index" name="block_index" value="">
-                                            @php
-                                                $roleCandidates = json_decode($session->role_candidate_ids, true);
-                                            @endphp
-                                            @foreach($roleCandidates as $role => $candidates)
-                                                                    <div class="mb-3">
-                                                                        <label for="{{ $role }}" class="form-label">{{ $role }}</label>
-                                                                        <select id="{{ $role }}" name="votes[{{ $role }}]" class="form-select">
-                                                                            @foreach($candidates as $candidate)
-                                                                                                            @php
-                                                                                                                $user = \Src\People\User::find($candidate);
-                                                                                                            @endphp
-                                                                                                            <option value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                            @endforeach
-                                            <div class="modal-footer bg-light border-0">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                                <button class="btn btn-warning" title="Vote" type="button"
-                                                    onclick="showConfirmationModal('{{ $voteFormId }}')">
-                                                    <i class="la la-check"></i> Vote
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="voteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow-lg">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="voteModalLabel">Vote</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
+                        <div class="modal-body bg-light">
+                            <form id="{{ $voteFormId }}" class="m-form vote-form" method="post"
+                                action="{{ route('main.voting.voting-sessions.vote', ['id' => $association->id, 'votingSession' => $session->id]) }}">
+                                @csrf
+                                <input type="hidden" id="block_index" name="block_index" value="">
+                                @php
+                                $roleCandidates = json_decode($session->role_candidate_ids, true);
+                                @endphp
+                                @foreach($roleCandidates as $role => $candidates)
+                                <div class="mb-3">
+                                    <label for="{{ $role }}" class="form-label">{{ $role }}</label>
+                                    <select id="{{ $role }}" name="votes[{{ $role }}]" class="form-select">
+                                        @foreach($candidates as $candidate)
+                                        @php
+                                        $user = \Src\People\User::find($candidate);
+                                        @endphp
+                                        <option value="{{ $candidate }}">{{ $user->profile->full_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endforeach
+                                <div class="modal-footer bg-light border-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                    </button>
+                                    <button class="btn btn-warning" title="Vote" type="button"
+                                        onclick="showConfirmationModal('{{ $voteFormId }}')">
+                                        <i class="la la-check"></i> Vote
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             @endforeach
             <!-- Confirmation Modal -->
             <div id="card-confirmation" class="card-confirmation" style="display: none;">
                 <span class="title">⚠️ Confirm Action</span>
                 <p class="description">
-                    Are you sure you want to perform a token burning process? This action is irreversible and will cost
+                    Are you sure you want to perform a token burning process? This action is irreversible and
+                    will cost
                     0.0001 ICP.
                 </p>
                 <a class="prefs">
@@ -292,12 +300,12 @@ Voting Sessions Overview
     }
 </style>
 @push('scripts')
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script>
-       $(document).ready(function () {
+<script src="{{ asset('js/app.js') }}"></script>
+<script>
+$(document).ready(function () {
     const backendCanisterId = 'bd3sg-teaaa-aaaaa-qaaba-cai';
 
-    const backendInterfaceFactory = ({ IDL }) => {
+    const backendInterfaceFactory = ({IDL}) => {
         return IDL.Service({
             'vote': IDL.Func([IDL.Text], [IDL.Opt(IDL.Nat64)], []),
         });
@@ -325,75 +333,80 @@ Voting Sessions Overview
         $('#card-confirmation').data('formId', formId).fadeIn();
     };
 
-    $('#confirmActionButton').on('click', async function () {
-    const formId = $('#card-confirmation').data('formId');
-    const form = $('#' + formId);
+    // Remove any existing event handlers before attaching the new one
+    $('#confirmActionButton').off('click').on('click', async function() {
+        const formId = $('#card-confirmation').data('formId');
+        const form = $('#' + formId);
+        const formData = new FormData(form[0]);
 
-    const formData = new FormData(form[0]);
+        try {
+            const initialResponse = await fetch(form.attr('action'), {
+                method: 'POST',
+                body: formData,
+            });
 
-    try {
-        const response = await fetch(form.attr('action'), {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        console.log('Response data:', data);
-
-        if (data.success) {
-            const details = data.details; 
-            console.log('Details:', details);
-
-            const voteResult = await backendActor.vote(details);
-            console.log('Vote result:', voteResult);
-
-            if (voteResult !== null) {
-                console.log('Submitting form...');
-                const blockIndex = BigInt(voteResult[0].toString());
-                console.log('Block index:', blockIndex);
-
-                formData.append('block_index', blockIndex);
-
-                const finalResponse = await fetch(form.attr('action'), {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!finalResponse.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const finalData = await finalResponse.json();
-                console.log('Final response data:', finalData);
-                window.location.reload();
-            } else {
-                throw new Error('Vote failed: Empty or invalid result');
+            if (!initialResponse.ok) {
+                throw new Error('Initial network response was not ok');
             }
-        } else {
-            throw new Error('Initial form submission failed');
+
+            const initialData = await initialResponse.json();
+            console.log('Initial response data:', initialData);
+
+            if (initialData.success) {
+                const details = initialData.details;
+                console.log('Details:', details);
+
+                const voteResult = await backendActor.vote(details);
+                console.log('Vote result:', voteResult);
+
+                if (voteResult !== null) {
+                    console.log('Submitting form...');
+                    const blockIndex = BigInt(voteResult[0].toString());
+                    console.log('Block index:', blockIndex);
+
+                    formData.append('block_index', blockIndex);
+
+                    const finalResponse = await fetch(form.attr('action'), {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!finalResponse.ok) {
+                        throw new Error('Final network response was not ok');
+                    }
+
+                    const finalData = await finalResponse.json();
+                    console.log('Final response data:', finalData);
+
+                    if (finalData.success) {
+                        window.location.reload();
+                    } else {
+                        throw new Error('Final form submission failed');
+                    }
+                } else {
+                    throw new Error('Vote failed: Empty or invalid result');
+                }
+            } else {
+                throw new Error('Initial form submission failed');
+            }
+        } catch (error) {
+            console.error('Vote failed:', error);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message,
+            });
+
+            $('.modal').modal('hide');
+            $('#card-confirmation').fadeOut();
         }
-    } catch (error) {
-        console.error('Vote failed:', error);
+    });
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.message,
-        });
-
-        $('.modal').modal('hide');
-        $('#card-confirmation').fadeOut();
-    }
-
-    $('.decline').on('click', function () {
+    $('.decline').on('click', function() {
         $('#card-confirmation').fadeOut();
     });
 });
 
-    </script>
+</script>
 @endpush
-
