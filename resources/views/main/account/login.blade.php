@@ -40,32 +40,32 @@
                 <!--begin::Content-->
                 <div class="d-flex flex-column flex-center py-7 py-lg-15 px-5 px-md-15 w-100">
                     <!--begin::Logo-->
-                    <a href="{{ route('manage.dashboard') }}" class="mb-12">
-                        <img alt="Logo" src="{{ image('logos/custom-1.png') }}" class="h-60px h-lg-75px"/>
-                    </a>
+{{--                    <a href="{{ route('manage.dashboard') }}" class="mb-12">--}}
+{{--                        <img alt="Logo" src="{{ image('logos/custom-1.png') }}" class="h-60px h-lg-75px"/>--}}
+{{--                    </a>--}}
                     <!--end::Logo-->
 
                     <!--begin::Image-->
                     <img class="d-none d-lg-block mx-auto w-275px w-md-50 w-xl-500px mb-10 mb-lg-20"
-                         src="{{ image('misc/auth-screens.png') }}" alt=""/>
+                         src="{{ image('misc/auth-login.png') }}" alt=""/>
                     <!--end::Image-->
 
                     <!--begin::Title-->
                     <h1 class="d-none d-lg-block text-white fs-2qx fw-bolder text-center mb-7">
-                        Fast, Efficient and Productive
+                        Login Page
                     </h1>
                     <!--end::Title-->
 
                     <!--begin::Text-->
-                    <div class="d-none d-lg-block text-white fs-base text-center">
-                        In this kind of post, <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the
-                            blogger</a>
+{{--                    <div class="d-none d-lg-block text-white fs-base text-center">--}}
+{{--                        In this kind of post, <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the--}}
+{{--                            blogger</a>--}}
 
-                        introduces a person they’ve interviewed <br/> and provides some background information about
+{{--                        introduces a person they’ve interviewed <br/> and provides some background information about--}}
 
-                        <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the interviewee</a>
-                        and their <br/> work following this is a transcript of the interview.
-                    </div>
+{{--                        <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the interviewee</a>--}}
+{{--                        and their <br/> work following this is a transcript of the interview.--}}
+{{--                    </div>--}}
                     <!--end::Text-->
                 </div>
                 <!--end::Content-->
