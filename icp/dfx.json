@@ -24,14 +24,10 @@
     },
     "internet_identity": {
       "type": "custom",
-      "candid": "https://github.com/dfinity/internet-identity/releases/download/release-2023-11-17/internet_identity.did",
-      "wasm": "https://github.com/dfinity/internet-identity/releases/download/release-2023-11-17/internet_identity_dev.wasm.gz",
-      "remote": {
-        "id": {
-          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-        }
-      },
-      "frontend": {}
+      "candid": "src/internet_identity/internet_identity.did",
+      "wasm": "internet_identity.wasm.gz",
+      "build": "bash -c 'II_DEV_CSP=1 II_FETCH_ROOT_KEY=1 II_DUMMY_CAPTCHA=${II_DUMMY_CAPTCHA:-1} scripts/build'",
+      "shrink" : false
     }
   },
   "defaults": {
